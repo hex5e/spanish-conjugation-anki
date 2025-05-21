@@ -9,11 +9,12 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send push notification to Discord
+      - name: Build and send Discord message
         run: |
-          commits=$(echo "${{ github.event.commits[*].message }}" | jq -R -s '. | gsub("\\n"; "")')
-          message="**${{ github.actor }}** pushed to **${{ github.repository }}**:\n$commits"
+          commits=$(echo "${{ toJson(github.event.commits) }}" | jq -r '.[] | "- [`" + .id[0:7] + "`] " + .message + " (by " + .author.name + ")"')
+          content="**${{ github.actor }}** pushed to **${{ github.repository }}**:\n$commits"
+
           curl -H "Content-Type: application/json" \
                -X POST \
-               -d "{\"content\": $commits}" \
+               -d "$(jq -nc --arg content "$content" '{content: $content}')" \
                ${{ secrets.DISCORD_WEBHOOK }}
