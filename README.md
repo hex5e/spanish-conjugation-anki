@@ -4,3 +4,4 @@
 - there are some headaches that are caused by the special characters that are hard to work around, in some cases I just had to deal with them manually
 - the most import table is in 'cards.csv', the text used for every flashcard is stored here
     - each card has a unique id which is a combination of verb_id, tense_id, and person_id
+- You can also add to the discussion on Discord https://discordapp.com/channels/1373077048146264166/1373081089349783753
