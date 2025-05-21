@@ -1,3 +1,6 @@
 - use dotenv and .env file to keep secrets
 - the CSV files in this directory contain Spanish characters that exist outside English á, é, í, ó, ú, ñ
     - for this reason when reading a CSV specify encoding="cp1252" like pd.read_csv("verbs_and_sentences.csv", encoding="cp1252")
+- there are some headaches that are caused by the special characters that are hard to work around, in some cases I just had to deal with them manually
+- the most import table is in 'cards.csv', the text used for every flashcard is stored here
+    - each card has a unique id which is a combination of verb_id, tense_id, and person_id
