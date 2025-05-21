@@ -3,7 +3,7 @@ name: Discord Push Notification
 on:
   push:
     branches:
-      - main  # or whatever branch
+      - main  # or your branch
 
 jobs:
   notify:
@@ -11,7 +11,9 @@ jobs:
     steps:
       - name: Send push notification to Discord
         run: |
+          commits=$(echo "${{ github.event.commits[*].message }}" | jq -R -s '. | gsub("\\n"; "")')
+          message="**${{ github.actor }}** pushed to **${{ github.repository }}**:\n$commits"
           curl -H "Content-Type: application/json" \
-          -X POST \
-          -d "{\"content\": \"New push to repo: ${{ github.repository }} by ${{ github.actor }}\"}" \
-          ${{ secrets.DISCORD_WEBHOOK }}
+               -X POST \
+               -d "{\"content\": $commits}" \
+               ${{ secrets.DISCORD_WEBHOOK }}
