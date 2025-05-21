@@ -1,0 +1,3 @@
+- use dotenv and .env file to keep secrets
+- the CSV files in this directory contain Spanish characters that exist outside English á, é, í, ó, ú, ñ
+    - for this reason when reading a CSV specify encoding="cp1252" like pd.read_csv("verbs_and_sentences.csv", encoding="cp1252")
