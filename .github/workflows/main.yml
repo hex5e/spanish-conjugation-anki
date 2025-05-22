@@ -3,18 +3,15 @@ name: Discord Push Notification
 on:
   push:
     branches:
-      - main  # or your branch
+      - main  # or whatever branch
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Build and send Discord message
+      - name: Send push notification to Discord
         run: |
-          commits=$(echo "${{ toJson(github.event.commits) }}" | jq -r '.[] | "- [`" + .id[0:7] + "`] " + .message + " (by " + .author.name + ")"')
-          content="**${{ github.actor }}** pushed to **${{ github.repository }}**:\n$commits"
-
           curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "$(jq -nc --arg content "$content" '{content: $content}')" \
-               ${{ secrets.DISCORD_WEBHOOK }}
+          -X POST \
+          -d "{\"content\": \"New push to repo: ${{ github.repository }} by ${{ github.actor }}\"}" \
+          ${{ secrets.DISCORD_WEBHOOK }}
