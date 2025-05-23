@@ -1,0 +1,14 @@
+form_id,form
+0,infinitivo
+1,gerundio
+2,participio
+3,indicativo_presente
+4,indicativo_preterito
+5,indicativo_imperfecto
+6,indicativo_futuro
+7,condicional
+8,subjuntivo_presente
+9,subjuntivo_imperfecto
+10,subjuntivo_futuro
+11,imperativo_affirmativo
+12,imperativo_negativo
