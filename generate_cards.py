@@ -22,6 +22,18 @@ def get_verb_stem_and_ending(verb):
         return verb[:-2], verb[-2:], False
     return verb, '', False
 
+def get_reflexive_pronoun(person_id):
+    """Get the appropriate reflexive pronoun for a given person"""
+    pronouns = {
+        11: 'me',    # yo
+        21: 'te',    # tú
+        31: 'se',    # él/ella/usted
+        12: 'nos',   # nosotros
+        22: 'os',    # vosotros
+        32: 'se'     # ellos/ellas/ustedes
+    }
+    return pronouns.get(person_id, '')
+
 def conjugate_regular(verb, form_id, person_id):
     """Generate regular conjugation for a given verb, form, and person"""
     stem, ending, is_reflexive = get_verb_stem_and_ending(verb)
@@ -30,10 +42,17 @@ def conjugate_regular(verb, form_id, person_id):
     if form_id == 0:  # infinitivo
         return verb
     elif form_id == 1:  # gerundio
+        base_form = ''
         if ending == 'ar':
-            return stem + 'ando'
+            base_form = stem + 'ando'
         else:  # -er, -ir
-            return stem + 'iendo'
+            base_form = stem + 'iendo'
+        
+        # For reflexive verbs, attach pronoun to the end of gerundio
+        if is_reflexive:
+            return base_form + 'se'
+        return base_form
+        
     elif form_id == 2:  # participio
         if is_reflexive:
             return ''  # Reflexive verbs don't have participio
@@ -123,12 +142,32 @@ def conjugate_regular(verb, form_id, person_id):
             endings = {11: 'ía', 21: 'ías', 31: 'ía', 12: 'íamos', 22: 'íais', 32: 'ían'}
         
         if person_id in endings:
-            return base_verb + endings[person_id]
+            conjugated = base_verb + endings[person_id]
+            if is_reflexive:
+                pronoun = get_reflexive_pronoun(person_id)
+                return pronoun + ' ' + conjugated
+            return conjugated
     
     # Get the appropriate conjugation
     if form_id in conjugations and ending in conjugations[form_id]:
         if person_id in conjugations[form_id][ending]:
-            return stem + conjugations[form_id][ending][person_id]
+            base_conjugation = stem + conjugations[form_id][ending][person_id]
+            
+            # Handle reflexive pronouns and special forms
+            if is_reflexive:
+                pronoun = get_reflexive_pronoun(person_id)
+                if form_id == 11:  # imperativo afirmativo - pronoun attached to end
+                    return base_conjugation + pronoun
+                else:  # All other forms - pronoun before verb
+                    result = pronoun + ' ' + base_conjugation
+                    if form_id == 12:  # imperativo negativo - add 'no' at beginning
+                        return 'no ' + result
+                    return result
+            else:
+                # Non-reflexive imperativo negativo - just add 'no'
+                if form_id == 12:
+                    return 'no ' + base_conjugation
+                return base_conjugation
     
     return ''
 
@@ -208,12 +247,12 @@ def generate_conjugation_table():
     # Show specific examples
     examples = [
         ('hablar', 'indicativo_presente', '1st_singular'),
-        ('comer', 'indicativo_presente', '1st_singular'),
-        ('vivir', 'indicativo_presente', '1st_singular'),
-        ('ser', 'indicativo_presente', '1st_singular'),  # irregular verb
+        ('hablar', 'imperativo_negativo', '2nd_singular'),
+        ('levantarse', 'indicativo_presente', '1st_singular'),
         ('levantarse', 'gerundio', 'not_applicable'),
-        ('hablar', 'subjuntivo_presente', '2nd_singular'),
-        ('comer', 'imperativo_affirmativo', '2nd_plural')
+        ('levantarse', 'imperativo_affirmativo', '2nd_singular'),
+        ('levantarse', 'imperativo_negativo', '2nd_singular'),
+        ('ducharse', 'indicativo_futuro', '3rd_plural')
     ]
     
     for verb_name, form_name, person_name in examples:
