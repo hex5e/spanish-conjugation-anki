@@ -1,14 +1,14 @@
-form_id,form
-0,infinitivo
-1,gerundio
-2,participio
-3,indicativo_presente
-4,indicativo_preterito
-5,indicativo_imperfecto
-6,indicativo_futuro
-7,condicional
-8,subjuntivo_presente
-9,subjuntivo_imperfecto
-10,subjuntivo_futuro
-11,imperativo_affirmativo
-12,imperativo_negativo
+form_id,form,trigger_phrases
+0,infinitivo,NA
+1,gerundio,NA
+2,participio,NA
+3,indicativo_presente,[ahora mismo; en este momento; en estos días; actualmente; en general; por lo general; normalmente; generalmente; habitualmente;]
+4,indicativo_preterito,[ayer; anteayer; el otro día; la semana pasada; el mes pasado; el año pasado; hace un momento; hace (x) días/semanas/años]
+5,indicativo_imperfecto,[cuando era joven; en mi infancia; era de noche; en el pasado; en aquel entonces; en aquellos tiempos; por aquel tiempo; antiguamente]
+6,indicativo_futuro,[mañana; pasado mañana; el/la próximo(a) semana/mes/año; dentro de (x) días/semanas/años; el lunes/martes/etc que viene; más tarde; pronto; eventualmente]
+7,condicional,[si yo/tú/etc fuera yo/tú/etc; si tuviera tiempo; si pudiera; en ese caso; de ser posible; con gusto; sería mejor que; dijo que; pensaba que; creía que; lo haría]
+8,subjuntivo_presente,[yo/tú/etc + (present) querer/esperar/desear/preferir + que; ojalá (que); yo/tú/etc + (present) alegrar/molestar/sentir/sorprender/temer/dudar/creer + que; en caso de que; para que; antes de que; a menos que; con tal de que; sin que]
+9,subjuntivo_imperfecto,[yo/tú/etc + (imperfecto) querer/esperar/desear/preferir + que; yo/tú/etc + (imperfecto) alegrar/molestar/sentir/sorprender/temer/dudar/creer + que; era + importante/necesario/una lástima/raro + que; si + (subjuntivo imperfecto) + entronces + (condicional)]
+10,subjuntivo_futuro,[El que lo hiciere; quien hubiere causado daño; el que dijere falsedad; si alguien cometiere fraude; Cualquiera que viniere]
+11,imperativo_affirmativo,NA
+12,imperativo_negativo,NA
