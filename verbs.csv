@@ -1,4 +1,4 @@
-verb_id,verb,collocations
+verb_id,verb,verb_collocations
 1,ser,[humano; necesario; posible; capaz; responsable; consciente; parte; útil; miembro; libre]
 2,haber,[que; sido; estado; habido; hecho; tenido; podido; ocurrido; llegado; visto]
 3,estar,[bien; mal; seguro; listo; dispuesto; en_casa; de_acuerdo; presente; ausente; enfermo]
