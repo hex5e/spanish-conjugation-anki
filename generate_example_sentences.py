@@ -2,7 +2,7 @@ from openai import OpenAI
 import csv
 import random
 
-cards_row = 0
+cards_row = 5020  # Change this to select a different card
 
 # ---------- Select card ------------------
 def convert_to_array(string):
@@ -53,11 +53,31 @@ print(f"form: {form}")
 print(f"person: {person}")
 print(f"verb collocations: {verb_collocattions}")
 print(f"form trigger phrases: {form_trigger_phrases}")
+print("\n\n")
 
-prompt = (
-    f"Generate a sentence using the verb '{verb}' in the form '{form}'. "
-    f"Consider some of these common collocations when generating your sentence: {random.sample(verb_collocattions, 3)}. "
-    "Make sure the sentence is grammatically correct and contextually appropriate."
-)
+reflexive_specification = "Include the reflexive pronoun in the conjugation; " if verb.endswith('se') else ""
+imperativo_negativo_specification = "Include 'no' in the conjugation; " if form == "imperativo_negativo" else ""
+imperativo_specification = "Use exclamation marks; " if "imperativo" in form else "The sentence should NOT be a command; Do NOT use exclamtion marks; "
+
+prompt = f"""
+You are given:
+- verb: "{verb}"
+- recommended collocations: {random.sample(verb_collocattions, 3)}
+- form: "{form}"
+- person: "{person}"
+- form trigger phrases: {random.sample(form_trigger_phrases, 1)}
+
+
+TASK
+1. Create a JSON object with exactly two keys:
+   • "conjugation" → the verb conjugated in the specified form. {reflexive_specification}{imperativo_negativo_specification}
+   • "example_sentence" → one grammatically correct, context-appropriate sentence (Spanish). {imperativo_specification}
+2. The sentence must include the conjugated verb, the form trigger phrase, and at least one recommended collocation. 
+3. Output ONLY the JSON object—no markdown, comments, or extra text.
+
+Example output
+{{"conjugation":"hablo","example_sentence":"Yo hablo español con mis compañeros de trabajo todos los días."}}
+"""
+
 
 print(f"Prompt: {prompt}")
