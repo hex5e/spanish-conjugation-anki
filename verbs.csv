@@ -1,160 +1,160 @@
-verb_id,verb
-1,ser
-2,haber
-3,estar
-4,tener
-5,hacer
-6,poder
-7,decir
-8,ir
-9,ver
-10,dar
-11,saber
-12,querer
-13,llegar
-14,pasar
-15,deber
-16,poner
-17,parecer
-18,quedar
-19,creer
-20,hablar
-21,llevar
-22,dejar
-23,seguir
-24,encontrar
-25,llamar
-26,venir
-27,pensar
-28,salir
-29,volver
-30,tomar
-31,conocer
-32,vivir
-33,sentir
-34,tratar
-35,mirar
-36,contar
-37,empezar
-38,esperar
-39,buscar
-40,existir
-41,entrar
-42,trabajar
-43,escribir
-44,perder
-45,producir
-46,ocurrir
-47,entender
-48,pedir
-49,recibir
-50,recordar
-51,terminar
-52,permitir
-53,aparecer
-54,conseguir
-55,comenzar
-56,servir
-57,sacar
-58,necesitar
-59,mantener
-60,resultar
-61,leer
-62,caer
-63,cambiar
-64,presentar
-65,crear
-66,abrir
-67,considerar
-68,oír
-69,acabar
-70,convertir
-71,ganar
-72,formar
-73,traer
-74,partir
-75,morir
-76,aceptar
-77,realizar
-78,suponer
-79,comprender
-80,lograr
-81,explicar
-82,preguntar
-83,tocar
-84,reconocer
-85,estudiar
-86,alcanzar
-87,nacer
-88,dirigir
-89,correr
-90,utilizar
-91,pagar
-92,ayudar
-93,gustar
-94,jugar
-95,escuchar
-96,cumplir
-97,ofrecer
-98,descubrir
-99,levantar
-100,intentar
-101,valer
-102,subir
-103,quedarse
-104,soler
-105,echar
-106,elegir
-107,soñar
-108,reunir
-109,actuar
-110,andar
-111,adquirir
-112,caber
-113,enviar
-114,incluir
-115,coger
-116,sonreír
-117,prohibir
-118,oler
-119,asir
-120,lucir
-121,aislar
-122,adecuar
-123,averiguar
-124,bendecir
-125,complacer
-126,pudrir
-127,predecir
-128,yacer
-129,erguir
-130,aunar
-131,rehusar
-132,errar
-133,engullir
-134,discernir
-135,gruñir
-136,endeudarse
-137,delinquir
-138,argüir
-139,reñir
-140,corroer
-141,tañer
-142,prohijar
-143,raer
-144,europeizar
-145,levantarse
-146,bañarse
-147,quejarse
-148,arrepentirse
-149,esforzarse
-150,liarse
-151,irse
-152,echarse
-153,subirse
-154,bajarse
-155,darse
-156,fijarse
-157,meterse
-158,dudar
-159,reírse
+verb_id,verb,collocations
+1,ser,[humano; necesario; posible; capaz; responsable; consciente; parte; útil; miembro; libre]
+2,haber,[que; sido; estado; habido; hecho; tenido; podido; ocurrido; llegado; visto]
+3,estar,[bien; mal; seguro; listo; dispuesto; en_casa; de_acuerdo; presente; ausente; enfermo]
+4,tener,[miedo; razón; cuidado; ganas; tiempo; acceso; derecho; culpa; efecto; lugar]
+5,hacer,[falta; caso; daño; ejercicio; preguntas; cola; referencia; ruido; cambios; sentido]
+6,poder,[ser; hacer; ir; ver; llegar; decir; cambiar; ayudar; evitar; entender]
+7,decir,[que; verdad; nada; algo; adiós; mentiras; nombre; palabras; frase; cierto]
+8,ir,[a; de; con; bien; mal; lejos; camino; rápido; adelante; junto]
+9,ver,[que; lo; televisión; película; claro; bien; mundo; gente; posibilidad; cara]
+10,dar,[cuenta; gracias; lugar; ejemplo; paso; mano; vuelta; miedo; apoyo; luz]
+11,saber,[qué; todo; nada; si; cómo; verdad; bien; quién; cuándo; dónde]
+12,querer,[decir; ir; ser; saber; más; estar; venir; volver; todo; nada]
+13,llegar,[a; ser; tiempo; casa; fin; acuerdo; tarde; meta; punto; límite]
+14,pasar,[tiempo; nada; algo; bien; mal; por; página; lista; frente; cosas]
+15,deber,[ser; hacer; tener; pagar; cumplir; existir; decir; estar; saber; acabar]
+16,poner,[marcha; fin; práctica; atención; ejemplo; duda; énfasis; nombre; funcionamiento; pie]
+17,parecer,[que; bien; mal; ser; haber; imposible; lógico; correcto; extraño; interesante]
+18,quedar,[en; con; bien; mal; claro; pendiente; libre; atrás; corto; fuera]
+19,creer,[que; en; nada; todo; verdad; Dios; posible; cierto; imposible; mentira]
+20,hablar,[de; con; sobre; bien; mal; español; gente; teléfono; política; inglés]
+21,llevar,[tiempo; ropa; a_cabo; razón; ventaja; adelante; puesto; encima; consigo; vida]
+22,dejar,[de; que; en_paz; atrás; claro; caer; pasar; libre; huella; todo]
+23,seguir,[siendo; adelante; igual; vivo; trabajando; buscando; creciendo; intentando; existiendo; estudiando]
+24,encontrar,[que; con; nada; algo; solución; trabajo; respuesta; dificultades; camino; paz]
+25,llamar,[atención; teléfono; nombre; casa; puerta; emergencia; cliente; policía; señor; hijo]
+26,venir,[a; de; con; bien; mal; aquí; casa; pronto; acá; seguido]
+27,pensar,[en; que; sobre; bien; mal; demasiado; esto; aquello; seriamente; claro]
+28,salir,[a; de; bien; mal; adelante; casa; fiesta; tarde; luz; caro]
+29,volver,[a; de; ser; casa; loco; ver; atrás; repetir; pronto; intentar]
+30,tomar,[en_cuenta; asiento; café; decisión; nota; agua; control; tiempo; medidas; sol]
+31,conocer,[a; gente; mundo; lugar; historia; persona; cultura; verdad; detalle; fondo]
+32,vivir,[en; con; de; bien; mal; solo; juntos; experiencia; momento; realidad]
+33,sentir,[que; bien; mal; dolor; miedo; frío; calor; amor; culpa; placer]
+34,tratar,[de; con; sobre; bien; mal; tema; pacientes; datos; enfermedad; información]
+35,mirar,[televisión; que; atrás; alrededor; bien; mal; lejos; arriba; abajo; reloj]
+36,contar,[con; que; historia; chiste; dinero; hasta; números; ejemplo; secreto; detalle]
+37,empezar,[a; por; con; de_nuevo; bien; mal; temprano; pronto; proyecto; proceso]
+38,esperar,[que; a; por; nada; mucho; poco; turno; respuesta; paciente; tren]
+39,buscar,[trabajo; ayuda; información; solución; camino; verdad; refugio; apoyo; aprobación; éxito]
+40,existir,[en; una; no; sólo; dios; vida; posibilidad; diferencia; necesidad; opción]
+41,entrar,[casa; en; tienda; clase; juego; vigor; detalles; escena; conflicto; pánico]
+42,trabajar,[duro; en; con; para; horas; mano; equipo; proyecto; campo; bien]
+43,escribir,[carta; libro; artículo; nombre; correo; poema; mensaje; historia; código; informe]
+44,perder,[tiempo; dinero; peso; vida; control; oportunidad; vista; partido; cabeza; tren]
+45,producir,[efecto; cambio; resultado; energía; bienes; sonido; impacto; película; fruto; beneficios]
+46,ocurrir,[que; algo; nada; accidente; problema; idea; suceso; cambio; noche; casualidad]
+47,entender,[que; bien; mal; nada; todo; problema; situación; idioma; razón; mensaje]
+48,pedir,[ayuda; perdón; permiso; consejo; comida; dinero; favor; cita; información; explicaciones]
+49,recibir,[carta; llamada; ayuda; apoyo; premio; visita; noticia; correo; pago; crítica]
+50,recordar,[que; bien; siempre; nombre; algo; momento; infancia; tiempos; detalles; fiesta]
+51,terminar,[con; de; en; proyecto; trabajo; relación; carrera; partido; pronto; todo]
+52,permitir,[que; acceso; entrada; uso; paso; hacerlo; trabajar; crecer; jugar; cambiar]
+53,aparecer,[en; pantalla; escena; lista; foto; prensa; repente; mercado; problema; sueño]
+54,conseguir,[trabajo; dinero; información; permiso; objetivo; resultado; novio; entradas; victoria; recursos]
+55,comenzar,[a; con; de_nuevo; bien; proyecto; carrera; fiesta; día; proceso; clase]
+56,servir,[para; de; como; ejemplo; base; comida; bebida; mesa; propósito; ayuda]
+57,sacar,[foto; dinero; provecho; tema; conclusiones; punta; nota; licencia; basura; adelante]
+58,necesitar,[ayuda; tiempo; dinero; hacer; saber; cambiar; médico; descanso; permiso; espacio]
+59,mantener,[calma; contacto; distancia; orden; control; equilibrio; vivo; relación; limpio; nivel]
+60,resultar,[ser; que; en; difícil; útil; evidente; necesario; positivo; beneficioso; fatal]
+61,leer,[libro; periódico; carta; novela; artículo; mensaje; revista; texto; cuento; etiqueta]
+62,caer,[bien; mal; lluvia; encima; suelo; noche; gotas; manos; golpe; trampa]
+63,cambiar,[opinión; vida; ropa; rumbo; tema; chip; paradigma; mundo; postura; actitud]
+64,presentar,[informe; proyecto; propuesta; solicitud; queja; examen; programa; candidata; oferta; batalla]
+65,crear,[empleo; valor; contenido; oportunidad; empresa; ambiente; arte; caos; cuenta; problemas]
+66,abrir,[puerta; cuenta; camino; debate; archivo; mercado; fuego; ojos; boca; paso]
+67,considerar,[que; necesario; importante; posible; opción; caso; ejemplo; válido; adecuado; problema]
+68,oír,[ruido; voz; música; pasos; noticias; gritos; campanas; hablar; nada; todo]
+69,acabar,[de; con; por; todo; tiempo; carrera; proyecto; problema; tarde; fin]
+70,convertir,[en; realidad; moneda; líder; hábito; rutina; oportunidad; energía; problema; leyenda]
+71,ganar,[dinero; tiempo; terreno; confianza; experiencia; respeto; guerra; premio; partido; peso]
+72,formar,[parte; equipo; grupo; opinión; filas; coalición; comunidad; profesionales; ciudadanos; alianza]
+73,traer,[consigo; problemas; suerte; recuerdos; noticias; regalos; comida; consecuencias; paz; lluvia]
+74,partir,[de; a; mañana; viaje; cero; base; dos; aquí; ahora; pronto]
+75,morir,[de; hambre; cáncer; amor; risa; sed; frío; viejo; sueño; guerra]
+76,aceptar,[responsabilidad; propuesta; invitación; reto; verdad; derrota; condiciones; ayuda; pago; cambio]
+77,realizar,[proyecto; estudio; investigación; trabajo; sueño; compra; análisis; cambio; pago; acto]
+78,suponer,[que; reto; riesgo; problema; ventaja; costo; esfuerzo; cambio; pérdida; gasto]
+79,comprender,[que; mundo; texto; situación; problema; importancia; proceso; realidad; lenguaje; nada]
+80,lograr,[objetivo; meta; éxito; resultados; avance; reconocimiento; victoria; acuerdo; eficiencia; cambio]
+81,explicar,[motivo; situación; razón; concepto; proceso; funcionamiento; idea; significado; caso; detalle]
+82,preguntar,[por; si; qué; nombre; edad; hora; motivo; dirección; precio; algo]
+83,tocar,[guitarra; piano; tema; puerta; violín; turno; tambor; fondo; cielo; suelo]
+84,reconocer,[que; error; mérito; culpa; trabajo; realidad; rostro; derechos; importancia; verdad]
+85,estudiar,[carrera; examen; caso; tema; historia; idioma; mercado; libro; materia; derecho]
+86,alcanzar,[meta; objetivo; acuerdo; nivel; límite; cima; sueño; punto; velocidad; éxito]
+87,nacer,[en; de; niño; idea; ciudad; amor; luz; sol; proyecto; estrella]
+88,dirigir,[empresa; película; tráfico; orquesta; equipo; carta; proyecto; mirada; palabras; campaña]
+89,correr,[riesgo; maratón; rumor; tiempo; sangre; agua; viento; carrera; calle; prisa]
+90,utilizar,[herramienta; tecnología; recursos; información; datos; método; energía; software; material; dinero]
+91,pagar,[impuestos; cuenta; precio; deuda; multa; servicios; alquiler; factura; intereses; cuota]
+92,ayudar,[a; que; gente; persona; niños; clientes; estudiantes; pacientes; familia; amigo]
+93,gustar,[mucho; nada; todo; idea; gente; música; comida; color; película; verbo]
+94,jugar,[fútbol; cartas; papel; rol; videojuegos; béisbol; tenis; ajedrez; niños; equipo]
+95,escuchar,[música; radio; podcast; consejo; ruido; voz; canción; historia; silencio; palabras]
+96,cumplir,[años; objetivo; promesa; norma; ley; plazo; sueño; orden; función; meta]
+97,ofrecer,[ayuda; servicios; apoyo; trabajo; empleo; oportunidad; solución; producto; dinero; café]
+98,descubrir,[que; mundo; talento; verdad; secreto; oro; planeta; lugar; solución; error]
+99,levantar,[mano; peso; cabeza; campamento; bandera; vuelo; edificio; ánimo; sesión; viento]
+100,intentar,[hacer; ser; entender; evitar; resolver; explicar; llegar; salir; cambiar; todo]
+101,valer,[la_pena; mucho; poco; oro; nada; fortuna; precio; tiempo; salario; esfuerzo]
+102,subir,[a; al; precio; escalera; nivel; volumen; montaña; temperatura; foto; costo]
+103,quedarse,[en; sin; dormido; callado; quieto; atrás; solo; fuera; corto; embarazada]
+104,soler,[ser; hacer; ir; usar; estar; trabajar; decir; comer; ocurrir; pasar]
+105,echar,[de_menos; a_perder; mano; fuera; culpa; raíces; gasolina; flores; llave; sal]
+106,elegir,[entre; opción; candidato; camino; presidente; menú; nombre; mejor; carrera; representante]
+107,soñar,[con; que; despierto; grande; lograr; futuro; éxito; libertad; viajar; amor]
+108,reunir,[requisitos; fuerza; valor; dinero; información; familia; amigos; condiciones; pruebas; equipo]
+109,actuar,[en; como; rápido; consecuencia; teatro; público; contra; favor; escena; papel]
+110,andar,[bien; mal; buscando; suelto; camino; por; deprisa; lejos; armado; juntos]
+111,adquirir,[experiencia; conocimientos; bienes; hábitos; empresa; compromiso; relevancia; capacidad; dominio; propiedad]
+112,caber,[duda; en; cabeza; posibilidad; todo; idea; pregunta; sitio; miedo; debate]
+113,enviar,[mensaje; carta; correo; paquete; información; solicitud; tropas; señal; datos; documento]
+114,incluir,[impuestos; gastos; ejemplos; datos; información; cláusula; lista; características; seguro; servicios]
+115,coger,[tren; mano; frío; carretera; sitio; camino; asiento; experiencia; fruta; teléfono]
+116,sonreír,[a; feliz; tímido; dulce; ampliamente; poco; gentil; abiertamente; satisfecho; secreto]
+117,prohibir,[fumar; entrada; venta; uso; paso; salida; acceso; armas; estacionar; beber]
+118,oler,[bien; mal; a; perfume; humo; comida; humedad; gasolina; flores; quemado]
+119,asir,[firmemente; mano; barra; oportunidad; cuerda; raíz; arma; mango; asa; vida]
+120,lucir,[bien; mal; elegante; espectacular; hermoso; vestido; traje; sonrisa; nuevo; brillante]
+121,aislar,[ruido; sonido; virus; paciente; cable; pared; térmicamente; socialmente; material; especie]
+122,adecuar,[contenido; estilo; formato; estrategia; producto; lenguaje; diseño; respuesta; plan; conducta]
+123,averiguar,[verdad; origen; causa; datos; información; razón; detalles; identidad; precios; ubicación]
+124,bendecir,[boda; mesa; pueblo; familia; agua; comida; hijo; unión; pareja; casa]
+125,complacer,[a; gusto; cliente; público; capricho; deseo; petición; rey; amo; audiencia]
+126,pudrir,[carne; comida; fruta; madera; raíces; cuerpo; pescado; queso; basura; dientes]
+127,predecir,[futuro; clima; resultados; comportamiento; eventos; tendencia; terremoto; tormenta; demanda; suerte]
+128,yacer,[cuerpo; cadáver; víctima; tierra; tumba; lecho; cama; reposo; sepulcro; profundidad]
+129,erguir,[cabeza; cuello; espalda; torso; estatua; figura; monumento; poste; columna; tronco]
+130,aunar,[esfuerzos; voluntades; fuerzas; recursos; intereses; criterios; talentos; capacidades; opiniones; acciones]
+131,rehusar,[aceptar; ayuda; oferta; invitación; propuesta; pago; comida; tratamiento; servicio; responsabilidad]
+132,errar,[camino; blanco; tiro; paso; cálculo; juicio; decisión; rumbo; golpe; respuesta]
+133,engullir,[comida; bocados; hamburguesa; sopa; aire; pastilla; alcohol; palabras; golosina; chicle]
+134,discernir,[diferencias; patrones; detalles; verdad; señales; matices; significado; rostros; intención; información]
+135,gruñir,[perro; cerdo; oso; estómago; gato; animal; voz; sonido; frustración; respuesta]
+136,endeudarse,[con; banco; tarjeta; préstamo; hipoteca; hasta_el_cuello; más; gobierno; empresa; familia]
+137,delinquir,[por; robo; drogas; violencia; necesidad; menores; arma; delito; reincidir; jóvenes]
+138,argüir,[que; razón; derecho; ley; causa; necesidad; ignorancia; abuso; falta; principio]
+139,reñir,[con; hijos; pareja; niños; hermano; amigo; alumno; empleado; colega; perro]
+140,corroer,[metal; hierro; acero; superficie; conciencia; alma; culpa; duda; miedo; óxido]
+141,tañer,[campanas; guitarra; arpa; laúd; órgano; violín; cuerda; vihuela; instrumento; tecla]
+142,prohijar,[niño; huérfano; causa; idea; proyecto; política; iniciativa; modelo; tradición; teoría]
+143,raer,[pintura; barniz; óxido; costra; hielo; barro; superficie; suelo; pegatina; piel]
+144,europeizar,[país; cultura; economía; leyes; política; sistema; costumbres; sociedad; educación; ciudad]
+145,levantarse,[temprano; tarde; cama; mañana; rebelar; rápido; de_la_silla; pueblo; ánimo; aire]
+146,bañarse,[playa; piscina; río; mar; lago; agua; sol; jabón; ducha; noche]
+147,quejarse,[de; dolor; ruido; hambre; injusticia; situación; frío; jefe; todo; atención]
+148,arrepentirse,[de; pecado; error; decisión; palabra; acción; pasado; infidelidad; compra; acto]
+149,esforzarse,[por; para; lograr; aprender; mejorar; conseguir; alcanzar; entender; estudiar; sacar]
+150,liarse,[con; pelea; manta; cables; sábanas; cigarro; problema; asunto; persona; lío]
+151,irse,[de; ya; lejos; ahora; pronto; viaje; vacaciones; casa; fiesta; corriendo]
+152,echarse,[a; dormir; llorar; reír; correr; atrás; encima; siesta; un_trago; crema]
+153,subirse,[a; al; tren; coche; escenario; árbol; avión; precio; cabeza; volumen]
+154,bajarse,[de; del; tren; coche; autobús; pantalones; barco; nube; escenario; programa]
+155,darse,[cuenta; prisa; vuelta; baño; lujo; golpe; cita; gusto; por_vencido; por_informado]
+156,fijarse,[en; bien; que; detalle; todo; nada; error; persona; situación; problema]
+157,meterse,[en; con; lío; problemas; cama; mano; gol; cabeza; agua; dentro]
+158,dudar,[de; que; si; mucho; nada; algo; nunca; verdad; capacidad; existencia]
+159,reírse,[de; mucho; a_carcajadas; solo; bien; mal; todos; chiste; uno_mismo; broma]
