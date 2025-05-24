@@ -212,15 +212,16 @@ def generate_conjugation_table():
                     'person_id': person_id,
                     'person': person,
                     'conjugation_id': f"{verb_id}_{form_id}_{person_id}",
+                    'hypothetical_regular_conjugation': regular_conjugation,
                     'conjugation': '',  # Left blank as requested
-                    'hypothetical_regular_conjugation': regular_conjugation
+                    'example_sentence': ''  # Left blank for users to fill in
                 }
                 conjugation_table.append(row)
     
     # Write to CSV file
-    output_filename = 'spanish_verb_conjugations_with_regular.csv'
+    output_filename = 'cards.csv'
     fieldnames = ['verb_id', 'verb', 'form_id', 'form', 'person_id', 'person', 
-                  'conjugation_id', 'conjugation', 'hypothetical_regular_conjugation']
+                  'conjugation_id', 'hypothetical_regular_conjugation', 'conjugation', 'example_sentence']
     
     with open(output_filename, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
