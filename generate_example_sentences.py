@@ -1,8 +1,15 @@
 from openai import OpenAI
 import csv
 import random
+import json
 
-cards_row = 5020  # Change this to select a different card
+cards_row = 0  # Change this to select a different card
+
+model = "gpt-4.1"
+if model == "gpt-4.1":
+    cards_update_column = "example_sentence_gpt4-1"
+elif model == "gpt-4.1-mini":
+    cards_update_column = "example_sentence_gpt4-1-mini"
 
 # ---------- Select card ------------------
 def convert_to_array(string):
@@ -79,5 +86,20 @@ Example output
 {{"conjugation":"hablo","example_sentence":"Yo hablo español con mis compañeros de trabajo todos los días."}}
 """
 
+client = OpenAI() 
 
-print(f"Prompt: {prompt}")
+response = client.chat.completions.create(
+    model=model,             # any chat-capable model works
+    messages=[{"role": "user", "content": prompt}],
+    temperature=0,
+    response_format={"type": "json_object"}  # makes the model emit strict JSON
+)
+
+chat_response = json.loads(response.choices[0].message.content)
+
+with open('cards.csv', mode='r', newline='', encoding='utf-8') as csvfile:
+    reader = csv.DictReader(csvfile)
+    rows = list(reader)
+    
+    rows[cards_row]['conjugation'] = chat_response['conjugation']
+    rows[cards_row][cards_update_column] = chat_response['example_sentence']
