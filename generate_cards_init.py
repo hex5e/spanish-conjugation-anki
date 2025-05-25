@@ -227,7 +227,11 @@ def generate_conjugation_table():
                     'hypothetical_regular_conjugation': regular_conjugation,
                     'conjugation': '',  # Left blank as requested
                     'example_sentence_gpt4-1': '',  # Left blank for GPT-4 examples
-                    'example_sentence_gpt4-1-mini': ''  # Left blank for GPT-4 mini examples
+                    'example_sentence_gpt4-1-mini': '',  # Left blank for GPT-4 mini examples
+                    'gpt_4_1_conjugation_with_verification': '',  # New verification column
+                    'gpt_4_1_sentence_with_verification': '',  # New verification column
+                    'attempts_count': '',  # Track number of attempts
+                    'failure_counts': ''  # Track which checks failed
                 }
                 conjugation_table.append(row)
     
@@ -235,7 +239,9 @@ def generate_conjugation_table():
     output_filename = 'cards.csv'
     fieldnames = ['verb_id', 'verb', 'form_id', 'form', 'person_id', 'person', 
                   'conjugation_id', 'hypothetical_regular_conjugation', 'conjugation', 
-                  'example_sentence_gpt4-1', 'example_sentence_gpt4-1-mini']
+                  'example_sentence_gpt4-1', 'example_sentence_gpt4-1-mini',
+                  'gpt_4_1_conjugation_with_verification', 'gpt_4_1_sentence_with_verification',
+                  'attempts_count', 'failure_counts']
     
     with open(output_filename, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
