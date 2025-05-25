@@ -15,12 +15,24 @@ def get_verb_stem_and_ending(verb):
     if verb.endswith('se'):
         # For reflexive verbs, remove 'se' first
         base_verb = verb[:-2]
-        if len(base_verb) >= 2:
-            return base_verb[:-2], base_verb[-2:], True
+        if base_verb.endswith('ar'):
+            return base_verb[:-2], 'ar', True
+        elif base_verb.endswith('er'):
+            return base_verb[:-2], 'er', True
+        elif base_verb.endswith('ir') or base_verb.endswith('ír'):
+            return base_verb[:-2], 'ir', True
+        else:
+            return base_verb, '', True
     
-    if len(verb) >= 2:
-        return verb[:-2], verb[-2:], False
-    return verb, '', False
+    # Handle non-reflexive verbs
+    if verb.endswith('ar'):
+        return verb[:-2], 'ar', False
+    elif verb.endswith('er'):
+        return verb[:-2], 'er', False
+    elif verb.endswith('ir') or verb.endswith('ír'):
+        return verb[:-2], 'ir', False
+    else:
+        return verb, '', False
 
 def get_reflexive_pronoun(person_id):
     """Get the appropriate reflexive pronoun for a given person"""
