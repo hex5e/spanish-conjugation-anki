@@ -1,0 +1,17 @@
+{{cloze:Text}}
+{{#Audio}}
+<div id="audio-container">
+{{Audio}}
+</div>
+<script>
+// Auto-play audio when answer is shown
+document.addEventListener('DOMContentLoaded', function() {
+    var audio = document.querySelector('audio');
+    if (audio) {
+        audio.play().catch(function(error) {
+            console.log('Audio autoplay prevented:', error);
+        });
+    }
+});
+</script>
+{{/Audio}}
