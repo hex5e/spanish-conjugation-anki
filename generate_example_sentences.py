@@ -6,9 +6,10 @@ import time
 
 # Configuration
 MODEL = "gpt-4.1"  # Use "o3-mini" for faster processing
-REASONING_EFFORT = "medium"  # Can be "low", "medium", or "high"
-MAX_COMPLETION_TOKENS = 2048 # only used for reasoning models like o3-mini
-SEED = 42
+# REASONING_EFFORT = "medium"  # only used for reasoning models like o3-mini; Can be "low", "medium", or "high"
+MAX_COMPLETION_TOKENS = 2048 
+# SEED = 42
+FULL_AUTO_MODE = True  # Set to False to require pressing Enter after each conjugation
 
 def convert_to_array(string):
     """
@@ -142,7 +143,7 @@ Example output
                 response_format={"type": "json_object"},
                 max_completion_tokens=MAX_COMPLETION_TOKENS,
                 # reasoning_effort=REASONING_EFFORT,
-                seed=SEED
+                # seed=SEED
             )
             
             generation_response = json.loads(response.choices[0].message.content)
@@ -196,7 +197,7 @@ Checks
                 response_format={"type": "json_object"},
                 max_completion_tokens=MAX_COMPLETION_TOKENS,
                 # reasoning_effort=REASONING_EFFORT,
-                seed=SEED
+                # seed=SEED
             )
             
             verification_result = json.loads(verification_response.choices[0].message.content)
@@ -228,6 +229,10 @@ Checks
         cards_rows[i]['attempts_count'] = str(attempts)
         cards_rows[i]['failure_counts'] = json.dumps(failure_counts)
         print(f"  Failed after {attempts} attempts. Failures: {failure_counts}")
+    
+    # Interactive mode - wait for user to press Enter
+    if not FULL_AUTO_MODE:
+        input("\nPress Enter to continue to the next conjugation...")
     
     # Save periodically (every 5 rows for o3) to avoid losing progress
     if processed_count % 5 == 0:
