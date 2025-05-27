@@ -4,7 +4,7 @@ import random
 import json
 import time
 
-model = "gpt-4.1"
+model = "o3-mini"  # Changed to o3
 
 def convert_to_array(string):
     """
@@ -37,19 +37,26 @@ with open('forms.csv', mode='r', newline='', encoding='utf-8') as csvfile:
 # Initialize OpenAI client once
 client = OpenAI()
 
+# Count rows that need processing
+rows_to_process = sum(1 for card in cards_rows 
+                     if not (card.get('conjugation_with_verification') and card.get('sentence_with_verification')))
+print(f"Found {rows_to_process} rows that still need verification")
+
 # Process each row
 total_rows = len(cards_rows)
+processed_count = 0
+
 for i, card in enumerate(cards_rows):
     verb = card['verb']
     form = card['form']
     person = card['person']
     
     # Skip if already has verified content
-    if card.get('gpt_4_1_conjugation_with_verification') and card.get('gpt_4_1_sentence_with_verification'):
-        print(f"Skipping row {i+1}/{total_rows} - already has verified content")
+    if card.get('conjugation_with_verification') and card.get('sentence_with_verification'):
         continue
     
-    print(f"\nProcessing row {i+1}/{total_rows}:")
+    processed_count += 1
+    print(f"\nProcessing row {i+1}/{total_rows} (unfilled row {processed_count}/{rows_to_process}):")
     print(f"  verb: {verb}")
     print(f"  form: {form}")
     print(f"  person: {person}")
@@ -74,21 +81,27 @@ for i, card in enumerate(cards_rows):
     imperativo_negativo_specification = "Include 'no' in the conjugation; " if form == "imperativo_negativo" else ""
     imperativo_specification = "Use exclamation marks; " if "imperativo" in form else "The sentence should NOT be a command; Do NOT use exclamation marks; "
     
-    # Initialize failure tracking
+    # Get existing attempts and failure counts
+    existing_attempts = int(card.get('attempts_count', '0') or '0')
+    existing_failures = json.loads(card.get('failure_counts', '{}') or '{}')
+    
+    # Initialize failure tracking with existing failures
     failure_counts = {
-        "correct_conjugation": 0,
-        "conjugation_in_sentence": 0,
-        "grammar_ok": 0,
-        "trigger_in_sentence": 0
+        "correct_conjugation": existing_failures.get("correct_conjugation", 0),
+        "conjugation_in_sentence": existing_failures.get("conjugation_in_sentence", 0),
+        "grammar_ok": existing_failures.get("grammar_ok", 0),
+        "trigger_in_sentence": existing_failures.get("trigger_in_sentence", 0)
     }
     
-    attempts = 0
-    max_attempts = 3
+    attempts = existing_attempts
+    max_attempts = existing_attempts + 3  # Add 3 more attempts with o3
     success = False
+    
+    print(f"  Previous attempts: {existing_attempts}, trying {max_attempts - existing_attempts} more times with {model}")
     
     while attempts < max_attempts and not success:
         attempts += 1
-        print(f"  Attempt {attempts}/{max_attempts}...")
+        print(f"  Attempt {attempts} (attempt {attempts - existing_attempts} with {model})...")
         
         # Sample collocations and trigger phrases
         selected_collocations = random.sample(verb_collocations, min(3, len(verb_collocations)))
@@ -129,10 +142,6 @@ Example output
             
             print(f"    Generated: {conjugation} - {example_sentence[:50]}...")
             
-            verify_reflexive_specification = "Include the reflexive pronoun in the conjugation; " if verb.endswith('se') else ""
-            verify_imperativo_negativo_specification = "Include 'no' in the conjugation; " if form == "imperativo_negativo" else ""
-            verify_imperativo_specification = "Use exclamation marks; " if "imperativo" in form else "The sentence should NOT be a command; Do NOT use exclamation marks; "
-
             # Verify the generation
             verification_prompt = f"""
 You are given
@@ -148,10 +157,10 @@ Return **only** a JSON object with four Boolean keys that independently signal w
 
 Checks  
 1. "correct_conjugation" - the supplied **conjugation** is the right form of **verb** for the specified **form** and **person**.  
-   {verify_reflexive_specification}{verify_imperativo_specification}
+   {reflexive_specification}{imperativo_specification}
 2. "conjugation_in_sentence" - that exact **conjugation** string appears in **example_sentence**.
 3. "grammar_ok" - **example_sentence** is grammatically correct Spanish.  
-   {verify_imperativo_negativo_specification}
+   {imperativo_negativo_specification}
 4. "trigger_in_sentence" - **example_sentence** contains **form_trigger_phrase** (case-insensitive match is acceptable).
 
 **Output format**
@@ -183,8 +192,8 @@ Checks
             
             if all_passed:
                 # Success! Update the row
-                cards_rows[i]['gpt_4_1_conjugation_with_verification'] = conjugation
-                cards_rows[i]['gpt_4_1_sentence_with_verification'] = example_sentence
+                cards_rows[i]['conjugation_with_verification'] = conjugation
+                cards_rows[i]['sentence_with_verification'] = example_sentence
                 cards_rows[i]['attempts_count'] = str(attempts)
                 cards_rows[i]['failure_counts'] = json.dumps(failure_counts)
                 print(f"    ✓ All checks passed!")
@@ -200,15 +209,16 @@ Checks
             print(f"    ✗ Error: {str(e)}")
             continue
     
-    # If we exhausted attempts without success
-    if not success:
-        cards_rows[i]['attempts_count'] = str(attempts)
-        cards_rows[i]['failure_counts'] = json.dumps(failure_counts)
-        print(f"  Failed after {attempts} attempts. Failures: {failure_counts}")
+    # Update attempts and failure counts even if unsuccessful
+    cards_rows[i]['attempts_count'] = str(attempts)
+    cards_rows[i]['failure_counts'] = json.dumps(failure_counts)
     
-    # Save periodically (every 10 rows) to avoid losing progress
-    if (i + 1) % 10 == 0:
-        print(f"\nSaving progress at row {i+1}...")
+    if not success:
+        print(f"  Failed after {attempts} total attempts. Failures: {failure_counts}")
+    
+    # Save periodically (every 10 processed rows) to avoid losing progress
+    if processed_count % 10 == 0:
+        print(f"\nSaving progress after processing {processed_count} unfilled rows...")
         with open('cards.csv', mode='w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=cards_fieldnames, quoting=csv.QUOTE_MINIMAL)
             writer.writeheader()
@@ -222,22 +232,29 @@ with open('cards.csv', mode='w', newline='', encoding='utf-8') as csvfile:
     writer.writerows(cards_rows)
 
 # Print summary statistics
-successful_rows = sum(1 for row in cards_rows if row.get('gpt_4_1_conjugation_with_verification'))
-failed_rows = sum(1 for row in cards_rows if row.get('attempts_count') and not row.get('gpt_4_1_conjugation_with_verification'))
+successful_rows = sum(1 for row in cards_rows if row.get('conjugation_with_verification'))
+still_failed = sum(1 for row in cards_rows 
+                  if row.get('attempts_count') and int(row.get('attempts_count', '0')) > 3 
+                  and not row.get('conjugation_with_verification'))
+newly_successful = processed_count - still_failed
 
 print("\n" + "="*50)
 print("SUMMARY:")
-print(f"Total rows processed: {total_rows}")
-print(f"Successful verifications: {successful_rows}")
-print(f"Failed after max attempts: {failed_rows}")
+print(f"Total rows in file: {total_rows}")
+print(f"Rows processed in this run: {processed_count}")
+print(f"Newly successful with {model}: {newly_successful}")
+print(f"Still failed after {model} attempts: {still_failed}")
+print(f"Total successful rows: {successful_rows}")
 
-# Analyze failure patterns
-if failed_rows > 0:
-    print("\nFailure analysis:")
+# Analyze failure patterns for rows that still failed
+if still_failed > 0:
+    print(f"\nFailure analysis for {still_failed} rows that still failed:")
     total_failures = {"correct_conjugation": 0, "conjugation_in_sentence": 0, "grammar_ok": 0, "trigger_in_sentence": 0}
     
     for row in cards_rows:
-        if row.get('failure_counts'):
+        if (row.get('attempts_count') and int(row.get('attempts_count', '0')) > 3 
+            and not row.get('conjugation_with_verification') 
+            and row.get('failure_counts')):
             failures = json.loads(row['failure_counts'])
             for check, count in failures.items():
                 total_failures[check] += count
