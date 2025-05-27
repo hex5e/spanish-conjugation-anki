@@ -4,7 +4,11 @@ import random
 import json
 import time
 
-model = "o3-mini"  # Changed to o3
+# Configuration
+MODEL = "gpt-4.1"  # Use "o3-mini" for faster processing
+REASONING_EFFORT = "medium"  # Can be "low", "medium", or "high"
+MAX_COMPLETION_TOKENS = 2048 # only used for reasoning models like o3-mini
+SEED = 42
 
 def convert_to_array(string):
     """
@@ -40,7 +44,7 @@ client = OpenAI()
 # Count rows that need processing
 rows_to_process = sum(1 for card in cards_rows 
                      if not (card.get('conjugation_with_verification') and card.get('sentence_with_verification')))
-print(f"Found {rows_to_process} rows that still need verification")
+print(f"Found {rows_to_process} rows that need processing with {MODEL}")
 
 # Process each row
 total_rows = len(cards_rows)
@@ -81,27 +85,25 @@ for i, card in enumerate(cards_rows):
     imperativo_negativo_specification = "Include 'no' in the conjugation; " if form == "imperativo_negativo" else ""
     imperativo_specification = "Use exclamation marks; " if "imperativo" in form else "The sentence should NOT be a command; Do NOT use exclamation marks; "
     
-    # Get existing attempts and failure counts
-    existing_attempts = int(card.get('attempts_count', '0') or '0')
-    existing_failures = json.loads(card.get('failure_counts', '{}') or '{}')
+    # Initialize or update failure tracking
+    if card.get('failure_counts'):
+        failure_counts = json.loads(card['failure_counts'])
+    else:
+        failure_counts = {
+            "correct_conjugation": 0,
+            "conjugation_in_sentence": 0,
+            "grammar_ok": 0,
+            "trigger_in_sentence": 0
+        }
     
-    # Initialize failure tracking with existing failures
-    failure_counts = {
-        "correct_conjugation": existing_failures.get("correct_conjugation", 0),
-        "conjugation_in_sentence": existing_failures.get("conjugation_in_sentence", 0),
-        "grammar_ok": existing_failures.get("grammar_ok", 0),
-        "trigger_in_sentence": existing_failures.get("trigger_in_sentence", 0)
-    }
-    
-    attempts = existing_attempts
-    max_attempts = existing_attempts + 3  # Add 3 more attempts with o3
+    # Get existing attempt count or start fresh
+    attempts = int(card.get('attempts_count', 0)) if card.get('attempts_count') else 0
+    max_total_attempts = attempts + 3  # Allow 3 more attempts with o3
     success = False
     
-    print(f"  Previous attempts: {existing_attempts}, trying {max_attempts - existing_attempts} more times with {model}")
-    
-    while attempts < max_attempts and not success:
+    while attempts < max_total_attempts and not success:
         attempts += 1
-        print(f"  Attempt {attempts} (attempt {attempts - existing_attempts} with {model})...")
+        print(f"  Attempt {attempts} with {MODEL}...")
         
         # Sample collocations and trigger phrases
         selected_collocations = random.sample(verb_collocations, min(3, len(verb_collocations)))
@@ -128,19 +130,26 @@ Example output
 """
         
         try:
-            # Generate conjugation and sentence
+            # Generate conjugation and sentence with o3
             response = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": generation_prompt}],
-                temperature=0,
-                response_format={"type": "json_object"}
+                model=MODEL,
+                messages=[
+                    {"role": "system",
+                     "content": "You are a Spanish-grammar assistant. "
+                                "Follow the TASK strictly and output valid JSON only."},
+                    {"role": "user", "content": generation_prompt}
+                ],
+                response_format={"type": "json_object"},
+                max_completion_tokens=MAX_COMPLETION_TOKENS,
+                # reasoning_effort=REASONING_EFFORT,
+                seed=SEED
             )
             
             generation_response = json.loads(response.choices[0].message.content)
             conjugation = generation_response['conjugation']
             example_sentence = generation_response['example_sentence']
             
-            print(f"    Generated: {conjugation} - {example_sentence[:50]}...")
+            print(f"    Generated: {conjugation} - {example_sentence}...")
             
             # Verify the generation
             verification_prompt = f"""
@@ -164,25 +173,30 @@ Checks
 4. "trigger_in_sentence" - **example_sentence** contains **form_trigger_phrase** (case-insensitive match is acceptable).
 
 **Output format**
-```json
 {{
   "correct_conjugation": true,
   "conjugation_in_sentence": true,
   "grammar_ok": true,
   "trigger_in_sentence": true
 }}
-```
 """
             
             # Small delay to avoid rate limits
-            time.sleep(0.5)
+            time.sleep(2)
             
-            # Verify
+            # Verify with o3
             verification_response = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": verification_prompt}],
-                temperature=0,
-                response_format={"type": "json_object"}
+                model=MODEL,
+                messages=[
+                    {"role": "system",
+                     "content": "You are a Spanish-grammar verification assistant. "
+                                "Carefully check each requirement and output valid JSON only."},
+                    {"role": "user", "content": verification_prompt}
+                ],
+                response_format={"type": "json_object"},
+                max_completion_tokens=MAX_COMPLETION_TOKENS,
+                # reasoning_effort=REASONING_EFFORT,
+                seed=SEED
             )
             
             verification_result = json.loads(verification_response.choices[0].message.content)
@@ -209,15 +223,14 @@ Checks
             print(f"    ✗ Error: {str(e)}")
             continue
     
-    # Update attempts and failure counts even if unsuccessful
-    cards_rows[i]['attempts_count'] = str(attempts)
-    cards_rows[i]['failure_counts'] = json.dumps(failure_counts)
-    
+    # If we exhausted attempts without success
     if not success:
-        print(f"  Failed after {attempts} total attempts. Failures: {failure_counts}")
+        cards_rows[i]['attempts_count'] = str(attempts)
+        cards_rows[i]['failure_counts'] = json.dumps(failure_counts)
+        print(f"  Failed after {attempts} attempts. Failures: {failure_counts}")
     
-    # Save periodically (every 10 processed rows) to avoid losing progress
-    if processed_count % 10 == 0:
+    # Save periodically (every 5 rows for o3) to avoid losing progress
+    if processed_count % 5 == 0:
         print(f"\nSaving progress after processing {processed_count} unfilled rows...")
         with open('cards.csv', mode='w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=cards_fieldnames, quoting=csv.QUOTE_MINIMAL)
@@ -233,28 +246,22 @@ with open('cards.csv', mode='w', newline='', encoding='utf-8') as csvfile:
 
 # Print summary statistics
 successful_rows = sum(1 for row in cards_rows if row.get('conjugation_with_verification'))
-still_failed = sum(1 for row in cards_rows 
-                  if row.get('attempts_count') and int(row.get('attempts_count', '0')) > 3 
-                  and not row.get('conjugation_with_verification'))
-newly_successful = processed_count - still_failed
+failed_rows = sum(1 for row in cards_rows if row.get('attempts_count') and not row.get('conjugation_with_verification'))
 
 print("\n" + "="*50)
 print("SUMMARY:")
 print(f"Total rows in file: {total_rows}")
-print(f"Rows processed in this run: {processed_count}")
-print(f"Newly successful with {model}: {newly_successful}")
-print(f"Still failed after {model} attempts: {still_failed}")
-print(f"Total successful rows: {successful_rows}")
+print(f"Rows processed this run: {processed_count}")
+print(f"Total successful verifications: {successful_rows}")
+print(f"Still failed after max attempts: {failed_rows}")
 
-# Analyze failure patterns for rows that still failed
-if still_failed > 0:
-    print(f"\nFailure analysis for {still_failed} rows that still failed:")
+# Analyze failure patterns
+if failed_rows > 0:
+    print("\nFailure analysis (all attempts including previous runs):")
     total_failures = {"correct_conjugation": 0, "conjugation_in_sentence": 0, "grammar_ok": 0, "trigger_in_sentence": 0}
     
     for row in cards_rows:
-        if (row.get('attempts_count') and int(row.get('attempts_count', '0')) > 3 
-            and not row.get('conjugation_with_verification') 
-            and row.get('failure_counts')):
+        if row.get('failure_counts'):
             failures = json.loads(row['failure_counts'])
             for check, count in failures.items():
                 total_failures[check] += count
@@ -263,4 +270,4 @@ if still_failed > 0:
     for check, count in total_failures.items():
         print(f"  {check}: {count}")
 
-print("\nDone!")
+print(f"\nDone!")
