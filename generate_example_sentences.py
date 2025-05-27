@@ -9,7 +9,8 @@ MODEL = "gpt-4.1"  # Use "o3-mini" for faster processing
 # REASONING_EFFORT = "medium"  # only used for reasoning models like o3-mini; Can be "low", "medium", or "high"
 MAX_COMPLETION_TOKENS = 2048 
 # SEED = 42
-FULL_AUTO_MODE = True  # Set to False to require pressing Enter after each conjugation
+FULL_AUTO_MODE = False  # Set to False to require pressing Enter after each conjugation
+PERIODIC_SAVE_NUMBER = 1 # Save progress every N processed rows
 
 def convert_to_array(string):
     """
@@ -234,8 +235,8 @@ Checks
     if not FULL_AUTO_MODE:
         input("\nPress Enter to continue to the next conjugation...")
     
-    # Save periodically (every 5 rows for o3) to avoid losing progress
-    if processed_count % 5 == 0:
+    # Save periodically to avoid losing progress
+    if processed_count % PERIODIC_SAVE_NUMBER == 0:
         print(f"\nSaving progress after processing {processed_count} unfilled rows...")
         with open('cards.csv', mode='w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=cards_fieldnames, quoting=csv.QUOTE_MINIMAL)
