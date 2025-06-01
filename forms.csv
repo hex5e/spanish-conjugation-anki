@@ -2,7 +2,7 @@ form_id,form,form_trigger_phrases
 0,infinitivo,[debería; tener que; ir a; acabar de; volver a; empezar a]
 1,gerundio,[estar + gerundio; seguir; llevar + tiempo + gerundio]
 2,participio,[haber + participio; ser + participio; estar + participio]
-3,indicativo_presente,[ahora mismo; en este momento; en estos días; actualmente; en general; por lo general; normalmente; generalmente; habitualmente;]
+3,indicativo_presente,[ahora mismo; en este momento; en estos días; actualmente; en general; por lo general; normalmente; generalmente; habitualmente]
 4,indicativo_preterito,[ayer; anteayer; el otro día; la semana pasada; el mes pasado; el año pasado; hace un momento; hace (x) días/semanas/años]
 5,indicativo_imperfecto,[cuando era joven; en mi infancia; era de noche; en el pasado; en aquel entonces; en aquellos tiempos; por aquel tiempo; antiguamente]
 6,indicativo_futuro,[mañana; pasado mañana; el/la próximo(a) semana/mes/año; dentro de (x) días/semanas/años; el lunes/martes/etc que viene; más tarde; pronto; eventualmente]
