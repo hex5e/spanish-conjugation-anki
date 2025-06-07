@@ -1,3 +1,4 @@
 .env
 .pyvenv
 audio
+__pycache__
