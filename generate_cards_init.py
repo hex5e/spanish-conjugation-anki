@@ -59,9 +59,15 @@ def conjugate_regular(verb, form_id, person_id):
             base_form = stem + 'ando'
         else:  # -er, -ir
             base_form = stem + 'iendo'
-        
+
         # For reflexive verbs, attach pronoun to the end of gerundio
         if is_reflexive:
+            if base_form.endswith('ando'):
+                return base_form.replace('ando', 'ándose')
+            elif base_form.endswith('iendo'):
+                return base_form.replace('iendo', 'iéndose')
+            elif base_form.endswith('yendo'):
+                return base_form.replace('yendo', 'yéndose')
             return base_form + 'se'
         return base_form
         
@@ -169,6 +175,14 @@ def conjugate_regular(verb, form_id, person_id):
             if is_reflexive:
                 pronoun = get_reflexive_pronoun(person_id)
                 if form_id == 11:  # imperativo afirmativo - pronoun attached to end
+                    # Special handling for 2nd plural - drop the trailing 'd'
+                    if person_id == 22 and base_conjugation.endswith('d'):
+                        trimmed = base_conjugation[:-1]
+                        if verb.rstrip('se') == 'ir':
+                            return 'idos'
+                        if ending == 'ir' and trimmed.endswith('i'):
+                            trimmed = trimmed[:-1] + 'í'
+                        return trimmed + pronoun
                     return base_conjugation + pronoun
                 else:  # All other forms - pronoun before verb
                     result = pronoun + ' ' + base_conjugation
