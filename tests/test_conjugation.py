@@ -545,15 +545,15 @@ def test_levantarse():
     # Imperativo afirmativo (no 1st person singular)
     assert (
         gen.generate("levantarse", "imperativo_affirmativo", "2nd_singular")
-        == "levantate"
+        == "levántate"
     )
     assert (
         gen.generate("levantarse", "imperativo_affirmativo", "3rd_singular")
-        == "levantese"
+        == "levántese"
     )
     assert (
         gen.generate("levantarse", "imperativo_affirmativo", "1st_plural")
-        == "levantemosnos"
+        == "levantémonos"
     )
     assert (
         gen.generate("levantarse", "imperativo_affirmativo", "2nd_plural")
@@ -561,7 +561,7 @@ def test_levantarse():
     )
     assert (
         gen.generate("levantarse", "imperativo_affirmativo", "3rd_plural")
-        == "levantense"
+        == "levántense"
     )
 
     # Imperativo negativo (no 1st person singular)
@@ -670,11 +670,11 @@ def test_reírse():
     assert gen.generate("reírse", "subjuntivo_futuro", "3rd_plural") == "se reieren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("reírse", "imperativo_affirmativo", "2nd_singular") == "reete"
-    assert gen.generate("reírse", "imperativo_affirmativo", "3rd_singular") == "rease"
-    assert gen.generate("reírse", "imperativo_affirmativo", "1st_plural") == "reamosnos"
+    assert gen.generate("reírse", "imperativo_affirmativo", "2nd_singular") == "ríete"
+    assert gen.generate("reírse", "imperativo_affirmativo", "3rd_singular") == "ríase"
+    assert gen.generate("reírse", "imperativo_affirmativo", "1st_plural") == "riámonos"
     assert gen.generate("reírse", "imperativo_affirmativo", "2nd_plural") == "reíos"
-    assert gen.generate("reírse", "imperativo_affirmativo", "3rd_plural") == "reanse"
+    assert gen.generate("reírse", "imperativo_affirmativo", "3rd_plural") == "ríanse"
 
     # Imperativo negativo (no 1st person singular)
     assert gen.generate("reírse", "imperativo_negativo", "2nd_singular") == "no te reas"
@@ -757,11 +757,11 @@ def test_irse():
     assert gen.generate("irse", "subjuntivo_futuro", "3rd_plural") == "se ieren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("irse", "imperativo_affirmativo", "2nd_singular") == "ete"
-    assert gen.generate("irse", "imperativo_affirmativo", "3rd_singular") == "ase"
-    assert gen.generate("irse", "imperativo_affirmativo", "1st_plural") == "amosnos"
+    assert gen.generate("irse", "imperativo_affirmativo", "2nd_singular") == "vete"
+    assert gen.generate("irse", "imperativo_affirmativo", "3rd_singular") == "váyase"
+    assert gen.generate("irse", "imperativo_affirmativo", "1st_plural") == "vámonos"
     assert gen.generate("irse", "imperativo_affirmativo", "2nd_plural") == "idos"
-    assert gen.generate("irse", "imperativo_affirmativo", "3rd_plural") == "anse"
+    assert gen.generate("irse", "imperativo_affirmativo", "3rd_plural") == "váyanse"
 
     # Imperativo negativo (no 1st person singular)
     assert gen.generate("irse", "imperativo_negativo", "2nd_singular") == "no te as"
@@ -876,13 +876,13 @@ def test_meterse():
     assert gen.generate("meterse", "subjuntivo_futuro", "3rd_plural") == "se metieren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("meterse", "imperativo_affirmativo", "2nd_singular") == "metete"
-    assert gen.generate("meterse", "imperativo_affirmativo", "3rd_singular") == "metase"
+    assert gen.generate("meterse", "imperativo_affirmativo", "2nd_singular") == "métete"
+    assert gen.generate("meterse", "imperativo_affirmativo", "3rd_singular") == "métase"
     assert (
-        gen.generate("meterse", "imperativo_affirmativo", "1st_plural") == "metamosnos"
+        gen.generate("meterse", "imperativo_affirmativo", "1st_plural") == "metámonos"
     )
     assert gen.generate("meterse", "imperativo_affirmativo", "2nd_plural") == "meteos"
-    assert gen.generate("meterse", "imperativo_affirmativo", "3rd_plural") == "metanse"
+    assert gen.generate("meterse", "imperativo_affirmativo", "3rd_plural") == "métanse"
 
     # Imperativo negativo (no 1st person singular)
     assert (

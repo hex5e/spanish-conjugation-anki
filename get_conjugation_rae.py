@@ -17,8 +17,16 @@ import argparse
 import json
 from typing import Dict, Iterable, Tuple
 
+import pyphen
+
 
 REFLEXIVE_SUFFIXES = ["se", "me", "te", "nos", "os"]
+
+ACCENTS = "áéíóú"
+PLAIN = "aeiou"
+ACCENT_MAP = dict(zip(PLAIN, ACCENTS))
+ACCENT_REVERSE = str.maketrans(ACCENTS, PLAIN)
+_dic = pyphen.Pyphen(lang="es")
 
 
 def strip_reflexive(verb: str) -> Tuple[str, bool]:
@@ -165,6 +173,44 @@ class RAEConjugationTransformer:
                 text = text.split(sep)[0]
         return text.strip()
 
+    def _syllables(self, word: str) -> list[str]:
+        return _dic.inserted(word).split("-")
+
+    def _stress_index(self, word: str) -> int:
+        syls = self._syllables(word)
+        for i, s in enumerate(syls):
+            if any(c in ACCENTS for c in s):
+                return i
+        if word[-1].lower() in ("n", "s") or word[-1].lower() in PLAIN:
+            return max(len(syls) - 2, 0)
+        return len(syls) - 1
+
+    def _apply_accent(self, word: str, index: int) -> str:
+        syls = self._syllables(word)
+        if index < 0 or index >= len(syls):
+            return word
+        s = syls[index]
+        if any(c in ACCENTS for c in s):
+            syls[index] = s
+        else:
+            pos = -1
+            for j in range(len(s) - 1, -1, -1):
+                ch = s[j].lower()
+                if ch in "aeo":
+                    pos = j
+                    break
+            if pos == -1:
+                for j in range(len(s) - 1, -1, -1):
+                    if s[j].lower() in "iu":
+                        pos = j
+                        break
+            if pos != -1:
+                ch = s[pos]
+                accent = ACCENT_MAP.get(ch.lower(), ch)
+                s = s[:pos] + accent + s[pos + 1 :]
+            syls[index] = s
+        return "".join(syls)
+
     def _map_personal(self, mapping: Dict[str, str]) -> Dict[str, str]:
         result: Dict[str, str] = {}
         for pronoun, value in mapping.items():
@@ -188,6 +234,26 @@ class RAEConjugationTransformer:
         if base.endswith("se"):
             base = base[:-2]
         ending = base[-2:]
+
+        def attach_affirmative(form: str, pron: str) -> str:
+            original = form
+            if pron == "nos" and form.endswith("mos"):
+                form = form[:-1]
+            elif pron == "os" and form.endswith("d"):
+                trimmed = form[:-1]
+                if base == "ir" and original == "id":
+                    return "idos"
+                if ending == "ir" and trimmed.endswith("i"):
+                    trimmed = trimmed[:-1] + "í"
+                form = trimmed
+            result = form + pron
+            if any(c in ACCENTS for c in original):
+                return result
+            orig_idx = self._stress_index(original)
+            new_default = self._stress_index(result.translate(ACCENT_REVERSE))
+            if orig_idx != new_default:
+                result = self._apply_accent(result, orig_idx)
+            return result
 
         if "infinitivo" in out:
             out["infinitivo"] = f"{base}se"
@@ -213,16 +279,7 @@ class RAEConjugationTransformer:
                     continue
                 form = mapping[person]
                 if key == "imperativo_affirmativo":
-                    if person == "2nd_plural" and form.endswith("d"):
-                        trimmed = form[:-1]
-                        if base == "ir":
-                            mapping[person] = "idos"
-                            continue
-                        if ending == "ir" and trimmed.endswith("i"):
-                            trimmed = trimmed[:-1] + "í"
-                        mapping[person] = trimmed + pron
-                    else:
-                        mapping[person] = form + pron
+                    mapping[person] = attach_affirmative(form, pron)
                 elif key == "imperativo_negativo":
                     if form.startswith("no "):
                         form = form[3:]

@@ -54,5 +54,5 @@ def test_reflexive_transform():
     assert out["gerundio"] == "metiéndose"
     assert out["participio"] == ""
     assert out["indicativo_presente"]["1st_singular"] == "me meto"
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "metete"
+    assert out["imperativo_affirmativo"]["2nd_singular"] == "métete"
     assert out["imperativo_negativo"]["2nd_singular"] == "no te metas"
