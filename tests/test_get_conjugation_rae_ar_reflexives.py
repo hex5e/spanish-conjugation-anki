@@ -111,13 +111,13 @@ def test_liarse():
     assert out["indicativo_presente"]["2nd_singular"] == "te lías"
     assert out["indicativo_presente"]["3rd_singular"] == "se lía"
     assert out["indicativo_presente"]["1st_plural"] == "nos liamos"
-    assert out["indicativo_presente"]["2nd_plural"] == "os liáis"
+    assert out["indicativo_presente"]["2nd_plural"] == "os liais"
     assert out["indicativo_presente"]["3rd_plural"] == "se lían"
 
     # Indicativo pretérito
-    assert out["indicativo_preterito"]["1st_singular"] == "me lié"
+    assert out["indicativo_preterito"]["1st_singular"] == "me lie"
     assert out["indicativo_preterito"]["2nd_singular"] == "te liaste"
-    assert out["indicativo_preterito"]["3rd_singular"] == "se lió"
+    assert out["indicativo_preterito"]["3rd_singular"] == "se lio"
     assert out["indicativo_preterito"]["1st_plural"] == "nos liamos"
     assert out["indicativo_preterito"]["2nd_plural"] == "os liasteis"
     assert out["indicativo_preterito"]["3rd_plural"] == "se liaron"
@@ -151,7 +151,7 @@ def test_liarse():
     assert out["subjuntivo_presente"]["2nd_singular"] == "te líes"
     assert out["subjuntivo_presente"]["3rd_singular"] == "se líe"
     assert out["subjuntivo_presente"]["1st_plural"] == "nos liemos"
-    assert out["subjuntivo_presente"]["2nd_plural"] == "os liéis"
+    assert out["subjuntivo_presente"]["2nd_plural"] == "os lieis"
     assert out["subjuntivo_presente"]["3rd_plural"] == "se líen"
 
     # Subjuntivo imperfecto
@@ -181,7 +181,7 @@ def test_liarse():
     assert out["imperativo_negativo"]["2nd_singular"] == "no te líes"
     assert out["imperativo_negativo"]["3rd_singular"] == "no se líe"
     assert out["imperativo_negativo"]["1st_plural"] == "no nos liemos"
-    assert out["imperativo_negativo"]["2nd_plural"] == "no os liéis"
+    assert out["imperativo_negativo"]["2nd_plural"] == "no os lieis"
     assert out["imperativo_negativo"]["3rd_plural"] == "no se líen"
 
 
