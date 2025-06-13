@@ -5,10 +5,11 @@ from regular_form_generator import RegularFormGenerator
 # instantiate a single generator for regular forms
 generator = RegularFormGenerator()
 
+
 def load_csv_data(filename, id_column, value_column):
     """Load data from CSV file and return as list of tuples"""
     data = []
-    with open(filename, 'r', encoding='utf-8') as f:
+    with open(filename, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             data.append((int(row[id_column]), row[value_column]))
@@ -19,101 +20,124 @@ def generate_conjugation_table():
     """Generate the main conjugation table"""
     # Try to load from CSV files first
     try:
-        verbs = load_csv_data('verbs.csv', 'verb_id', 'verb')
-        forms = load_csv_data('forms.csv', 'form_id', 'form')
-        persons = load_csv_data('persons.csv', 'person_id', 'person')
+        verbs = load_csv_data("verbs.csv", "verb_id", "verb")
+        forms = load_csv_data("forms.csv", "form_id", "form")
+        persons = load_csv_data("persons.csv", "person_id", "person")
         print("Loaded data from existing CSV files")
     except FileNotFoundError:
         print("CSV files not found.")
         return
-    
+
     # Generate the conjugation table
     conjugation_table = []
-    
+
     for verb_id, verb in verbs:
         for form_id, form in forms:
             # Skip participio for reflexive verbs
-            if form_id == 2 and verb.endswith('se'):
+            if form_id == 2 and verb.endswith("se"):
                 continue
-                
+
             # Determine which persons apply to this form
             if form_id <= 2:  # infinitivo, gerundio, participio
                 applicable_persons = [(0, "not_applicable")]
             elif form_id in [11, 12]:  # imperativo forms - no 1st person singular
-                applicable_persons = persons[2:]  # Skip "not_applicable" and "1st_singular"
+                applicable_persons = persons[
+                    2:
+                ]  # Skip "not_applicable" and "1st_singular"
             else:  # All other forms use the 6 person conjugations
                 applicable_persons = persons[1:]  # Skip the first "not_applicable"
-            
+
             for person_id, person in applicable_persons:
                 # Generate hypothetical regular conjugation
                 regular_conjugation = generator.generate(verb, form, person)
-                
+
                 row = {
-                    'verb_id': verb_id,
-                    'verb': verb,
-                    'form_id': form_id,
-                    'form': form,
-                    'person_id': person_id,
-                    'person': person,
-                    'conjugation_id': f"{verb_id}_{form_id}_{person_id}",
-                    'hypothetical_regular_conjugation': regular_conjugation,
-                    'conjugation': '',  # Left blank as requested
-                    'example_sentence_gpt4-1': '',  # Left blank for GPT-4 examples
-                    'example_sentence_gpt4-1-mini': '',  # Left blank for GPT-4 mini examples
-                    'gpt_4_1_conjugation_with_verification': '',  # New verification column
-                    'gpt_4_1_sentence_with_verification': '',  # New verification column
-                    'attempts_count': '',  # Track number of attempts
-                    'failure_counts': ''  # Track which checks failed
+                    "verb_id": verb_id,
+                    "verb": verb,
+                    "form_id": form_id,
+                    "form": form,
+                    "person_id": person_id,
+                    "person": person,
+                    "conjugation_id": f"{verb_id}_{form_id}_{person_id}",
+                    "hypothetical_regular_conjugation": regular_conjugation,
+                    "conjugation": "",  # Left blank as requested
+                    "example_sentence_gpt4-1": "",  # Left blank for GPT-4 examples
+                    "example_sentence_gpt4-1-mini": "",  # Left blank for GPT-4 mini examples
+                    "gpt_4_1_conjugation_with_verification": "",  # New verification column
+                    "gpt_4_1_sentence_with_verification": "",  # New verification column
+                    "attempts_count": "",  # Track number of attempts
+                    "failure_counts": "",  # Track which checks failed
                 }
                 conjugation_table.append(row)
-    
+
     # Write to CSV file
-    output_filename = 'cards.csv'
-    fieldnames = ['verb_id', 'verb', 'form_id', 'form', 'person_id', 'person', 
-                  'conjugation_id', 'hypothetical_regular_conjugation', 'conjugation', 
-                  'example_sentence_gpt4-1', 'example_sentence_gpt4-1-mini',
-                  'gpt_4_1_conjugation_with_verification', 'gpt_4_1_sentence_with_verification',
-                  'attempts_count', 'failure_counts']
-    
-    with open(output_filename, 'w', newline='', encoding='utf-8') as csvfile:
+    output_filename = "cards.csv"
+    fieldnames = [
+        "verb_id",
+        "verb",
+        "form_id",
+        "form",
+        "person_id",
+        "person",
+        "conjugation_id",
+        "hypothetical_regular_conjugation",
+        "conjugation",
+        "example_sentence_gpt4-1",
+        "example_sentence_gpt4-1-mini",
+        "gpt_4_1_conjugation_with_verification",
+        "gpt_4_1_sentence_with_verification",
+        "attempts_count",
+        "failure_counts",
+    ]
+
+    with open(output_filename, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(conjugation_table)
-    
+
     # Calculate statistics
-    reflexive_count = sum(1 for _, verb in verbs if verb.endswith('se'))
+    reflexive_count = sum(1 for _, verb in verbs if verb.endswith("se"))
     non_reflexive_count = len(verbs) - reflexive_count
-    
+
     print(f"\nSuccessfully generated {output_filename}")
     print(f"Total rows: {len(conjugation_table)}")
     print(f"\nBreakdown:")
     print(f"- Total verbs: {len(verbs)}")
     print(f"  - Non-reflexive verbs: {non_reflexive_count}")
     print(f"  - Reflexive verbs: {reflexive_count}")
-    
+
     # Show sample rows with regular conjugations
     print("\nSample rows with hypothetical regular conjugations:")
     print("-" * 130)
-    print("verb_id | verb       | form                | person       | conjugation_id | hypothetical_regular")
+    print(
+        "verb_id | verb       | form                | person       | conjugation_id | hypothetical_regular"
+    )
     print("-" * 130)
-    
+
     # Show specific examples
     examples = [
-        ('hablar', 'indicativo_presente', '1st_singular'),
-        ('hablar', 'imperativo_negativo', '2nd_singular'),
-        ('levantarse', 'indicativo_presente', '1st_singular'),
-        ('levantarse', 'gerundio', 'not_applicable'),
-        ('levantarse', 'imperativo_affirmativo', '2nd_singular'),
-        ('levantarse', 'imperativo_negativo', '2nd_singular'),
-        ('ducharse', 'indicativo_futuro', '3rd_plural')
+        ("hablar", "indicativo_presente", "1st_singular"),
+        ("hablar", "imperativo_negativo", "2nd_singular"),
+        ("levantarse", "indicativo_presente", "1st_singular"),
+        ("levantarse", "gerundio", "not_applicable"),
+        ("levantarse", "imperativo_affirmativo", "2nd_singular"),
+        ("levantarse", "imperativo_negativo", "2nd_singular"),
+        ("ducharse", "indicativo_futuro", "3rd_plural"),
     ]
-    
+
     for verb_name, form_name, person_name in examples:
         for row in conjugation_table:
-            if row['verb'] == verb_name and row['form'] == form_name and row['person'] == person_name:
-                print(f"{row['verb_id']:7} | {row['verb']:10} | {row['form']:19} | {row['person']:12} | "
-                      f"{row['conjugation_id']:14} | {row['hypothetical_regular_conjugation']}")
+            if (
+                row["verb"] == verb_name
+                and row["form"] == form_name
+                and row["person"] == person_name
+            ):
+                print(
+                    f"{row['verb_id']:7} | {row['verb']:10} | {row['form']:19} | {row['person']:12} | "
+                    f"{row['conjugation_id']:14} | {row['hypothetical_regular_conjugation']}"
+                )
                 break
+
 
 if __name__ == "__main__":
     generate_conjugation_table()
