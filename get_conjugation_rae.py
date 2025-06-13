@@ -168,7 +168,7 @@ class RAEConjugationTransformer:
     }
 
     def _clean(self, text: str) -> str:
-        for sep in [" / ", " o "]:
+        for sep in [" / ", " o ", " u "]:
             if sep in text:
                 text = text.split(sep)[0]
         return text.strip()
