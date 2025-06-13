@@ -239,16 +239,21 @@ class RAEConjugationTransformer:
             original = form
             if pron == "nos" and form.endswith("mos"):
                 form = form[:-1]
+                result = form + pron
             elif pron == "os" and form.endswith("d"):
                 trimmed = form[:-1]
                 if base == "ir" and original == "id":
                     return "idos"
                 if ending == "ir" and trimmed.endswith("i"):
                     trimmed = trimmed[:-1] + "í"
-                form = trimmed
-            result = form + pron
+                result = trimmed + pron
+                return result
+            else:
+                result = form + pron
+
             if any(c in ACCENTS for c in original):
                 return result
+
             orig_idx = self._stress_index(original)
             new_default = self._stress_index(result.translate(ACCENT_REVERSE))
             if orig_idx != new_default:

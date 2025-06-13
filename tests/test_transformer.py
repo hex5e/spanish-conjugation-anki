@@ -46,6 +46,22 @@ RAW = {
     },
 }
 
+RAW_QUEDAR = {
+    "Formas no personales": {
+        "Infinitivo": {"": "quedar"},
+        "Gerundio": {"": "quedando"},
+        "Participio": {"": "quedado"},
+    },
+    "Imperativo": {
+        "Imperativo": {
+            "tú": "queda",
+            "usted": "quede",
+            "vosotros, vosotras": "quedad",
+            "ustedes": "queden",
+        }
+    },
+}
+
 
 def test_reflexive_transform():
     transformer = RAEConjugationTransformer("meterse", is_reflexive=True)
@@ -56,3 +72,9 @@ def test_reflexive_transform():
     assert out["indicativo_presente"]["1st_singular"] == "me meto"
     assert out["imperativo_affirmativo"]["2nd_singular"] == "métete"
     assert out["imperativo_negativo"]["2nd_singular"] == "no te metas"
+
+
+def test_second_plural_no_accent():
+    transformer = RAEConjugationTransformer("quedarse", is_reflexive=True)
+    out = transformer.transform(RAW_QUEDAR)
+    assert out["imperativo_affirmativo"]["2nd_plural"] == "quedaos"
