@@ -3,4 +3,6 @@ dotenv
 elevenlabs
 openai
 pandas
+cloudscraper
+beautifulsoup4
 pytest
