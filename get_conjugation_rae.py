@@ -185,6 +185,10 @@ class RAEConjugationTransformer:
         imperativo = data.get("Imperativo", {})
         if "Imperativo" in imperativo:
             out["imperativo_affirmativo"] = self._map_personal(imperativo["Imperativo"])
+            if "1st_plural" not in out["imperativo_affirmativo"]:
+                subj = out.get("subjuntivo_presente")
+                if isinstance(subj, dict) and "1st_plural" in subj:
+                    out["imperativo_affirmativo"]["1st_plural"] = subj["1st_plural"]
 
         subj_pres = out.get("subjuntivo_presente")
         if subj_pres:
