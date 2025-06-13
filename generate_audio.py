@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from elevenlabs import save
 import os
+
 load_dotenv()
 
 client = ElevenLabs(api_key=os.getenv("TTS_API_KEY"))
