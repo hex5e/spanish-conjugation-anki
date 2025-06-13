@@ -39,16 +39,16 @@ produce audio using ElevenLabs.
 
 ## `cards.csv` fields
 
-| field                           | description                                              | example                             |
-|---------------------------------|----------------------------------------------------------|-------------------------------------|
-| `verb`                          | infinitive form of the verb                              | `ser`                               |
-| `form`                          | grammatical tense or mood                                | `indicativo_presente`               |
-| `person`                        | grammatical person/number                                | `1st_singular`                      |
-| `hypothetical_regular_conjugation` | conjugation if the verb were regular                    | `so`                                |
-| `conjugation`                   | actual conjugation                                       | `soy`                               |
-| `regular`                       | whether the conjugation matches the regular form         | `false`                             |
-| `sentence`                      | example sentence using the conjugation                   | `Soy capaz de correr un maratón.`   |
-| `audio_path`                    | path to the audio recording of the sentence              | `audio/1_3_11.mp3`                  |
+| field                              | description                                              | example                             |
+|------------------------------------|----------------------------------------------------------|-------------------------------------|
+| `verb`                             | infinitive form of the verb                              | `ser`                               |
+| `form`                             | grammatical tense or mood                                | `indicativo_presente`               |
+| `person`                           | grammatical person/number                                | `1st_singular`                      |
+| `hypothetical_regular_conjugation` | conjugation if the verb were regular                     | `so`                                |
+| `conjugation`                      | actual conjugation                                       | `soy`                               |
+| `regular`                          | whether the conjugation matches the regular form         | `false`                             |
+| `sentence`                         | example sentence using the conjugation                   | `Soy capaz de correr un maratón.`   |
+| `audio_path`                       | path to the audio recording of the sentence              | `audio/1_3_11.mp3`                  |
 
 Join the discussion on
 [Discord](https://discordapp.com/channels/1373077048146264166/1373081089349783753)
