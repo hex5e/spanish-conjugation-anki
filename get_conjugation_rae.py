@@ -88,13 +88,17 @@ def _parse_conjugation(html: str) -> Dict[str, Dict[str, Dict[str, str]]]:
     conjugations: Dict[str, Dict[str, Dict[str, str]]] = {}
     for block in section.find_all("div", class_="c-collapse"):
         title_elem = block.find("h3")
-        mood = title_elem.get_text(" ", strip=True) if title_elem else block.get("id", "")
+        mood = (
+            title_elem.get_text(" ", strip=True) if title_elem else block.get("id", "")
+        )
         for table in block.find_all("table"):
             first_row = table.find("tr")
             if first_row and len(first_row.find_all("th")) <= 2:
                 # Non-personal forms: infinitive, participle, ...
                 data = _parse_non_personal(table)
-                conjugations.setdefault(mood, {}).update({k: {"": v} for k, v in data.items()})
+                conjugations.setdefault(mood, {}).update(
+                    {k: {"": v} for k, v in data.items()}
+                )
             else:
                 data = _parse_personal(table)
                 conjugations.setdefault(mood, {}).update(data)
