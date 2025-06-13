@@ -31,7 +31,9 @@ produce audio using ElevenLabs.
 - `generate_audio.py` creates audio files for the sentences with
   ElevenLabs.
 - `get_conjugation_rae.py` scrapes conjugations from the RAE dictionary
-  website and outputs them in the project's JSON format.
+  website and outputs them in the project's JSON format. Reflexive verbs
+  are handled automatically by removing the trailing pronoun before
+  fetching.
 - `regular_form_generator.py` provides hypothetical regular forms used to
   flag irregular conjugations.
 

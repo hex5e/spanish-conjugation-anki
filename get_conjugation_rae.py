@@ -15,7 +15,19 @@ from __future__ import annotations
 
 import argparse
 import json
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Tuple
+
+
+REFLEXIVE_SUFFIXES = ["se", "me", "te", "nos", "os"]
+
+
+def strip_reflexive(verb: str) -> Tuple[str, bool]:
+    """Return verb without trailing reflexive pronoun and a flag."""
+    for suf in REFLEXIVE_SUFFIXES:
+        if verb.endswith(suf):
+            return verb[: -len(suf)], True
+    return verb, False
+
 
 import cloudscraper
 from bs4 import BeautifulSoup
@@ -116,6 +128,10 @@ class RAEConjugationFetcher:
 class RAEConjugationTransformer:
     """Convert raw RAE tables into the project's conjugation format."""
 
+    def __init__(self, verb: str, is_reflexive: bool = False) -> None:
+        self.verb = verb
+        self.is_reflexive = is_reflexive
+
     PERSON_MAP = {
         "yo": "1st_singular",
         "tú": "2nd_singular",
@@ -157,6 +173,62 @@ class RAEConjugationTransformer:
             if person:
                 result[person] = self._clean(value)
         return result
+
+    def _add_reflexive(self, out: Dict[str, dict | str]) -> None:
+        pronouns = {
+            "1st_singular": "me",
+            "2nd_singular": "te",
+            "3rd_singular": "se",
+            "1st_plural": "nos",
+            "2nd_plural": "os",
+            "3rd_plural": "se",
+        }
+
+        base = self.verb
+        if base.endswith("se"):
+            base = base[:-2]
+        ending = base[-2:]
+
+        if "infinitivo" in out:
+            out["infinitivo"] = f"{base}se"
+        if "gerundio" in out:
+            g = out["gerundio"]
+            if g.endswith("ando"):
+                g = g[:-4] + "ándose"
+            elif g.endswith("iendo"):
+                g = g[:-5] + "iéndose"
+            elif g.endswith("yendo"):
+                g = g[:-5] + "yéndose"
+            else:
+                g = g + "se"
+            out["gerundio"] = g
+        if "participio" in out:
+            out["participio"] = ""
+
+        for key, mapping in out.items():
+            if not isinstance(mapping, dict):
+                continue
+            for person, pron in pronouns.items():
+                if person not in mapping:
+                    continue
+                form = mapping[person]
+                if key == "imperativo_affirmativo":
+                    if person == "2nd_plural" and form.endswith("d"):
+                        trimmed = form[:-1]
+                        if base == "ir":
+                            mapping[person] = "idos"
+                            continue
+                        if ending == "ir" and trimmed.endswith("i"):
+                            trimmed = trimmed[:-1] + "í"
+                        mapping[person] = trimmed + pron
+                    else:
+                        mapping[person] = form + pron
+                elif key == "imperativo_negativo":
+                    if form.startswith("no "):
+                        form = form[3:]
+                    mapping[person] = f"no {pron} {form}"
+                else:
+                    mapping[person] = f"{pron} {form}"
 
     def transform(
         self, data: Dict[str, Dict[str, Dict[str, str]]]
@@ -205,6 +277,9 @@ class RAEConjugationTransformer:
             if neg:
                 out["imperativo_negativo"] = neg
 
+        if self.is_reflexive:
+            self._add_reflexive(out)
+
         return out
 
 
@@ -214,8 +289,9 @@ def main(argv: Iterable[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     fetcher = RAEConjugationFetcher()
-    raw = fetcher.get_conjugation(args.verb)
-    transformer = RAEConjugationTransformer()
+    base, is_reflexive = strip_reflexive(args.verb)
+    raw = fetcher.get_conjugation(base)
+    transformer = RAEConjugationTransformer(args.verb, is_reflexive=is_reflexive)
     conjugations = transformer.transform(raw)
     print(json.dumps(conjugations, ensure_ascii=False, indent=2))
 
