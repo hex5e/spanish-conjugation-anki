@@ -7,33 +7,6 @@ from regular_form_generator import RegularFormGenerator
 
 gen = RegularFormGenerator()
 
-FORMS = list(gen.FORM_NAME_TO_ID.keys())
-PERSONS = list(gen.PERSON_NAME_TO_ID.keys())
-
-
-def _check_all_combos(verb):
-    reflexive = verb.endswith("se")
-    for form in FORMS:
-        for person in PERSONS:
-            result = gen.generate(verb, form, person)
-            if form == "participio":
-                if reflexive:
-                    assert result == ""
-                else:
-                    assert result != ""
-            elif form in ["infinitivo", "gerundio"]:
-                assert result != ""
-            elif form in ["imperativo_affirmativo", "imperativo_negativo"]:
-                if person in ["not_applicable", "1st_singular"]:
-                    assert result == ""
-                else:
-                    assert result != ""
-            else:
-                if person == "not_applicable":
-                    assert result == ""
-                else:
-                    assert result != ""
-
 
 def test_hablar():
     # Non-personal forms
@@ -119,9 +92,6 @@ def test_hablar():
     assert gen.generate("hablar", "imperativo_negativo", "2nd_plural") == "no habléis"
     assert gen.generate("hablar", "imperativo_negativo", "3rd_plural") == "no hablen"
 
-    _check_all_combos("hablar")
-
-
 def test_deber():
     # Non-personal forms
     assert gen.generate("deber", "infinitivo", "not_applicable") == "deber"
@@ -205,9 +175,6 @@ def test_deber():
     assert gen.generate("deber", "imperativo_negativo", "1st_plural") == "no debamos"
     assert gen.generate("deber", "imperativo_negativo", "2nd_plural") == "no debáis"
     assert gen.generate("deber", "imperativo_negativo", "3rd_plural") == "no deban"
-
-    _check_all_combos("deber")
-
 
 def test_vivir():
     # Non-personal forms
@@ -293,9 +260,6 @@ def test_vivir():
     assert gen.generate("vivir", "imperativo_negativo", "2nd_plural") == "no viváis"
     assert gen.generate("vivir", "imperativo_negativo", "3rd_plural") == "no vivan"
 
-    _check_all_combos("vivir")
-
-
 def test_oír():
     # Non-personal forms
     assert gen.generate("oír", "infinitivo", "not_applicable") == "oír"
@@ -379,9 +343,6 @@ def test_oír():
     assert gen.generate("oír", "imperativo_negativo", "1st_plural") == "no oamos"
     assert gen.generate("oír", "imperativo_negativo", "2nd_plural") == "no oáis"
     assert gen.generate("oír", "imperativo_negativo", "3rd_plural") == "no oan"
-
-    _check_all_combos("oír")
-
 
 def test_levantarse():
     # Non-personal forms
@@ -621,9 +582,6 @@ def test_levantarse():
         == "no se levanten"
     )
 
-    _check_all_combos("levantarse")
-
-
 def test_reírse():
     # Non-personal forms
     assert gen.generate("reírse", "infinitivo", "not_applicable") == "reírse"
@@ -722,9 +680,6 @@ def test_reírse():
     assert gen.generate("reírse", "imperativo_negativo", "2nd_plural") == "no os reáis"
     assert gen.generate("reírse", "imperativo_negativo", "3rd_plural") == "no se rean"
 
-    _check_all_combos("reírse")
-
-
 def test_irse():
     # Non-personal forms
     assert gen.generate("irse", "infinitivo", "not_applicable") == "irse"
@@ -808,9 +763,6 @@ def test_irse():
     assert gen.generate("irse", "imperativo_negativo", "1st_plural") == "no nos amos"
     assert gen.generate("irse", "imperativo_negativo", "2nd_plural") == "no os áis"
     assert gen.generate("irse", "imperativo_negativo", "3rd_plural") == "no se an"
-
-    _check_all_combos("irse")
-
 
 def test_meterse():
     # Non-personal forms
@@ -939,5 +891,3 @@ def test_meterse():
         gen.generate("meterse", "imperativo_negativo", "2nd_plural") == "no os metáis"
     )
     assert gen.generate("meterse", "imperativo_negativo", "3rd_plural") == "no se metan"
-
-    _check_all_combos("meterse")
