@@ -2,7 +2,8 @@
 
 This script scrapes the conjugation tables from ``dle.rae.es``.  The
 site sits behind Cloudflare so ``cloudscraper`` is used to emulate a
-real browser.  Parsed results are printed as JSON to stdout.
+real browser.  Parsed results are transformed into the deck's JSON
+format and printed to stdout.
 
 Example::
 
@@ -112,13 +113,106 @@ class RAEConjugationFetcher:
         return self._parse_conjugation(html)
 
 
+class RAEConjugationTransformer:
+    """Convert raw RAE tables into the project's conjugation format."""
+
+    PERSON_MAP = {
+        "yo": "1st_singular",
+        "tú": "2nd_singular",
+        "tú / vos": "2nd_singular",
+        "vos": "2nd_singular",
+        "usted": "3rd_singular",
+        "él, ella": "3rd_singular",
+        "nosotros, nosotras": "1st_plural",
+        "vosotros, vosotras": "2nd_plural",
+        "ustedes": "3rd_plural",
+        "ellos, ellas": "3rd_plural",
+    }
+
+    INDICATIVE_MAP = {
+        "Presente": "indicativo_presente",
+        "Pretérito perfecto simple / Pretérito": "indicativo_preterito",
+        "Pretérito imperfecto / Copretérito": "indicativo_imperfecto",
+        "Futuro simple / Futuro": "indicativo_futuro",
+        "Condicional simple / Pospretérito": "condicional",
+    }
+
+    SUBJUNCTIVE_MAP = {
+        "Presente": "subjuntivo_presente",
+        "Pretérito imperfecto / Pretérito": "subjuntivo_imperfecto",
+        "Futuro simple / Futuro": "subjuntivo_futuro",
+    }
+
+    def _clean(self, text: str) -> str:
+        for sep in [" / ", " o "]:
+            if sep in text:
+                text = text.split(sep)[0]
+        return text.strip()
+
+    def _map_personal(self, mapping: Dict[str, str]) -> Dict[str, str]:
+        result: Dict[str, str] = {}
+        for pronoun, value in mapping.items():
+            key = pronoun.split("/")[0].split(",")[0].strip().lower()
+            person = self.PERSON_MAP.get(pronoun) or self.PERSON_MAP.get(key)
+            if person:
+                result[person] = self._clean(value)
+        return result
+
+    def transform(
+        self, data: Dict[str, Dict[str, Dict[str, str]]]
+    ) -> Dict[str, dict | str]:
+        out: Dict[str, dict | str] = {}
+
+        non_personal = data.get("Formas no personales", {})
+        for src, dst in {
+            "Infinitivo": "infinitivo",
+            "Gerundio": "gerundio",
+            "Participio": "participio",
+        }.items():
+            if src in non_personal:
+                out[dst] = self._clean(non_personal[src].get("", ""))
+
+        indicativo = data.get("Indicativo", {})
+        for src, dst in self.INDICATIVE_MAP.items():
+            if src in indicativo:
+                out[dst] = self._map_personal(indicativo[src])
+
+        subjuntivo = data.get("Subjuntivo", {})
+        for src, dst in self.SUBJUNCTIVE_MAP.items():
+            if src in subjuntivo:
+                out[dst] = self._map_personal(subjuntivo[src])
+
+        imperativo = data.get("Imperativo", {})
+        if "Imperativo" in imperativo:
+            out["imperativo_affirmativo"] = self._map_personal(imperativo["Imperativo"])
+
+        subj_pres = out.get("subjuntivo_presente")
+        if subj_pres:
+            neg: Dict[str, str] = {}
+            for person in [
+                "2nd_singular",
+                "3rd_singular",
+                "1st_plural",
+                "2nd_plural",
+                "3rd_plural",
+            ]:
+                if person in subj_pres:
+                    neg[person] = f"no {subj_pres[person]}"
+            if neg:
+                out["imperativo_negativo"] = neg
+
+        return out
+
+
 def main(argv: Iterable[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Scrape conjugations from RAE")
     parser.add_argument("verb", help="Spanish verb to fetch")
     args = parser.parse_args(argv)
 
     fetcher = RAEConjugationFetcher()
-    conjugations = fetcher.get_conjugation(args.verb)
+    raw = fetcher.get_conjugation(args.verb)
+    transformer = RAEConjugationTransformer()
+    conjugations = transformer.transform(raw)
     print(json.dumps(conjugations, ensure_ascii=False, indent=2))
 
 

@@ -92,6 +92,7 @@ def test_hablar():
     assert gen.generate("hablar", "imperativo_negativo", "2nd_plural") == "no habléis"
     assert gen.generate("hablar", "imperativo_negativo", "3rd_plural") == "no hablen"
 
+
 def test_deber():
     # Non-personal forms
     assert gen.generate("deber", "infinitivo", "not_applicable") == "deber"
@@ -175,6 +176,7 @@ def test_deber():
     assert gen.generate("deber", "imperativo_negativo", "1st_plural") == "no debamos"
     assert gen.generate("deber", "imperativo_negativo", "2nd_plural") == "no debáis"
     assert gen.generate("deber", "imperativo_negativo", "3rd_plural") == "no deban"
+
 
 def test_vivir():
     # Non-personal forms
@@ -260,6 +262,7 @@ def test_vivir():
     assert gen.generate("vivir", "imperativo_negativo", "2nd_plural") == "no viváis"
     assert gen.generate("vivir", "imperativo_negativo", "3rd_plural") == "no vivan"
 
+
 def test_oír():
     # Non-personal forms
     assert gen.generate("oír", "infinitivo", "not_applicable") == "oír"
@@ -343,6 +346,7 @@ def test_oír():
     assert gen.generate("oír", "imperativo_negativo", "1st_plural") == "no oamos"
     assert gen.generate("oír", "imperativo_negativo", "2nd_plural") == "no oáis"
     assert gen.generate("oír", "imperativo_negativo", "3rd_plural") == "no oan"
+
 
 def test_levantarse():
     # Non-personal forms
@@ -582,6 +586,7 @@ def test_levantarse():
         == "no se levanten"
     )
 
+
 def test_reírse():
     # Non-personal forms
     assert gen.generate("reírse", "infinitivo", "not_applicable") == "reírse"
@@ -680,6 +685,7 @@ def test_reírse():
     assert gen.generate("reírse", "imperativo_negativo", "2nd_plural") == "no os reáis"
     assert gen.generate("reírse", "imperativo_negativo", "3rd_plural") == "no se rean"
 
+
 def test_irse():
     # Non-personal forms
     assert gen.generate("irse", "infinitivo", "not_applicable") == "irse"
@@ -763,6 +769,7 @@ def test_irse():
     assert gen.generate("irse", "imperativo_negativo", "1st_plural") == "no nos amos"
     assert gen.generate("irse", "imperativo_negativo", "2nd_plural") == "no os áis"
     assert gen.generate("irse", "imperativo_negativo", "3rd_plural") == "no se an"
+
 
 def test_meterse():
     # Non-personal forms
