@@ -6,3 +6,4 @@ pandas
 cloudscraper
 beautifulsoup4
 pytest
+pyphen
