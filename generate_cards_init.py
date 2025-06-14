@@ -5,6 +5,8 @@ from regular_form_generator import RegularFormGenerator
 # instantiate a single generator for regular forms
 generator = RegularFormGenerator()
 
+verbs_dictionary_conjugations = {}
+
 # verbs that lack an imperative
 NO_IMPERATIVE_VERBS = {
     "deber",
@@ -103,10 +105,7 @@ def generate_conjugation_table():
                     "conjugation_id": f"{verb_id}_{form_id}_{person_id}",
                     "hypothetical_regular_conjugation": regular_conjugation,
                     "conjugation": "",  # Left blank as requested
-                    "example_sentence_gpt4-1": "",  # Left blank for GPT-4 examples
-                    "example_sentence_gpt4-1-mini": "",  # Left blank for GPT-4 mini examples
-                    "gpt_4_1_conjugation_with_verification": "",  # New verification column
-                    "gpt_4_1_sentence_with_verification": "",  # New verification column
+                    "example_sentence": "",  # Left blank for GPT-4 examples
                     "attempts_count": "",  # Track number of attempts
                     "failure_counts": "",  # Track which checks failed
                 }
@@ -124,12 +123,9 @@ def generate_conjugation_table():
         "conjugation_id",
         "hypothetical_regular_conjugation",
         "conjugation",
-        "example_sentence_gpt4-1",
-        "example_sentence_gpt4-1-mini",
-        "gpt_4_1_conjugation_with_verification",
-        "gpt_4_1_sentence_with_verification",
+        "example_sentence",
         "attempts_count",
-        "failure_counts",
+        "failure_counts"
     ]
 
     with open(output_filename, "w", newline="", encoding="utf-8") as csvfile:
