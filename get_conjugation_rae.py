@@ -306,6 +306,9 @@ class RAEConjugationTransformer:
             if src in non_personal:
                 out[dst] = self._clean(non_personal[src].get("", ""))
 
+        if self.is_reflexive:
+            out["participio"] = ""
+
         indicativo = data.get("Indicativo", {})
         for src, dst in self.INDICATIVE_MAP.items():
             if src in indicativo:
