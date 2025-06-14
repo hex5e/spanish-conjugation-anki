@@ -414,6 +414,8 @@ class RegularFormGenerator:
                         if person == "1st_plural" and base_conjugation.endswith("mos"):
                             base_conjugation = base_conjugation[:-1]
                             result = base_conjugation + pronoun
+                            if original == "amos":
+                                return "ámonos"
                         elif person == "2nd_plural" and base_conjugation.endswith("d"):
                             trimmed = base_conjugation[:-1]
                             if ending == "ir" and trimmed.endswith("i"):
