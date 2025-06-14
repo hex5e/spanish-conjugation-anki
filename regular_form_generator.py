@@ -1,3 +1,6 @@
+from get_conjugation_rae import RAEConjugationTransformer
+
+
 class RegularFormGenerator:
     """Generate hypothetical regular Spanish verb forms."""
 
@@ -369,8 +372,15 @@ class RegularFormGenerator:
                                 return "idos"
                             if ending == "ir" and trimmed.endswith("i"):
                                 trimmed = trimmed[:-1] + "í"
-                            return trimmed + pronoun
-                        return base_conjugation + pronoun
+                            base_form = trimmed
+                        else:
+                            base_form = base_conjugation
+                        return RAEConjugationTransformer(verb)._attach_affirmative(
+                            base_form,
+                            pronoun,
+                            verb.rstrip("se"),
+                            ending,
+                        )
                     result = f"{pronoun} {base_conjugation}"
                     if form == "imperativo_negativo":
                         return f"no {result}"

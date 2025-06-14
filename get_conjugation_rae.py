@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from typing import Dict, Iterable, Tuple
 
 import pyphen
@@ -58,19 +59,26 @@ class RAEConjugationFetcher:
         resp.raise_for_status()
         return resp.text
 
+    def _cell_text(self, cell: BeautifulSoup) -> str:
+        """Return cleaned text from a table cell."""
+        text = cell.get_text(" ", strip=True)
+        pattern = r"(?<=[A-Za-zÁÉÍÓÚáéíóúÜüÑñ])\s+(se|me|te|nos|os)(?=\s*[/.,;!?]|$)"
+        text = re.sub(pattern, r"\1", text)
+        return text
+
     def _parse_non_personal(self, table: BeautifulSoup) -> Dict[str, str]:
         """Parse tables without pronouns (infinitive, gerund, participle)."""
         data: Dict[str, str] = {}
         rows = list(table.find_all("tr"))
         it = iter(rows)
         for row in it:
-            headings = [c.get_text("", strip=True) for c in row.find_all("th")]
+            headings = [self._cell_text(c) for c in row.find_all("th")]
             if not headings:
                 continue
             next_row = next(it, None)
             if not next_row:
                 break
-            values = [c.get_text("", strip=True) for c in next_row.find_all("td")]
+            values = [self._cell_text(c) for c in next_row.find_all("td")]
             for h, v in zip(headings, values):
                 data[h] = v
         return data
@@ -78,12 +86,12 @@ class RAEConjugationFetcher:
     def _parse_personal(self, table: BeautifulSoup) -> Dict[str, Dict[str, str]]:
         """Parse tables that contain pronoun based conjugations."""
         rows = table.find_all("tr")
-        headers = [c.get_text("", strip=True) for c in rows[0].find_all(["th", "td"])]
+        headers = [self._cell_text(c) for c in rows[0].find_all(["th", "td"])]
         tenses = headers[3:]
         result: Dict[str, Dict[str, str]] = {t: {} for t in tenses}
 
         for row in rows[1:]:
-            cells = [c.get_text("", strip=True) for c in row.find_all(["th", "td"])]
+            cells = [self._cell_text(c) for c in row.find_all(["th", "td"])]
             if len(cells) == len(tenses) + 3:
                 _, _, pronoun = cells[:3]
                 forms = cells[3:]
@@ -220,6 +228,33 @@ class RAEConjugationTransformer:
                 result[person] = self._clean(value)
         return result
 
+    def _attach_affirmative(self, form: str, pron: str, base: str, ending: str) -> str:
+        original = form
+        if base == "ir" and pron == "nos":
+            return "vámonos"
+        if pron == "nos" and form.endswith("mos"):
+            form = form[:-1]
+            result = form + pron
+        elif pron == "os" and form.endswith("d"):
+            trimmed = form[:-1]
+            if base == "ir" and original == "id":
+                return "idos"
+            if ending == "ir" and trimmed.endswith("i"):
+                trimmed = trimmed[:-1] + "í"
+            result = trimmed + pron
+            return result
+        else:
+            result = form + pron
+
+        if any(c in ACCENTS for c in original):
+            return result
+
+        orig_idx = self._stress_index(original)
+        new_default = self._stress_index(result.translate(ACCENT_REVERSE))
+        if orig_idx != new_default:
+            result = self._apply_accent(result, orig_idx)
+        return result
+
     def _add_reflexive(self, out: Dict[str, dict | str]) -> None:
         pronouns = {
             "1st_singular": "me",
@@ -236,29 +271,7 @@ class RAEConjugationTransformer:
         ending = base[-2:]
 
         def attach_affirmative(form: str, pron: str) -> str:
-            original = form
-            if pron == "nos" and form.endswith("mos"):
-                form = form[:-1]
-                result = form + pron
-            elif pron == "os" and form.endswith("d"):
-                trimmed = form[:-1]
-                if base == "ir" and original == "id":
-                    return "idos"
-                if ending == "ir" and trimmed.endswith("i"):
-                    trimmed = trimmed[:-1] + "í"
-                result = trimmed + pron
-                return result
-            else:
-                result = form + pron
-
-            if any(c in ACCENTS for c in original):
-                return result
-
-            orig_idx = self._stress_index(original)
-            new_default = self._stress_index(result.translate(ACCENT_REVERSE))
-            if orig_idx != new_default:
-                result = self._apply_accent(result, orig_idx)
-            return result
+            return self._attach_affirmative(form, pron, base, ending)
 
         if "infinitivo" in out:
             out["infinitivo"] = f"{base}se"
@@ -347,6 +360,23 @@ class RAEConjugationTransformer:
 
         if self.is_reflexive and not raw_is_reflexive:
             self._add_reflexive(out)
+        elif self.is_reflexive and raw_is_reflexive:
+            imp = out.get("imperativo_affirmativo")
+            if isinstance(imp, dict) and "1st_plural" in imp:
+                form = imp["1st_plural"].lstrip("nos ")
+                imp["1st_plural"] = self._attach_affirmative(
+                    form,
+                    "nos",
+                    self.verb.rstrip("se"),
+                    self.verb.rstrip("se")[-2:],
+                )
+
+        for key, value in out.items():
+            if isinstance(value, dict):
+                for p, form in value.items():
+                    value[p] = form.replace(" rio", " rió")
+            elif isinstance(value, str):
+                out[key] = value.replace(" rio", " rió")
 
         return out
 
