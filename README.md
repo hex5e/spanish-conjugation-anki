@@ -46,7 +46,7 @@ produce audio using ElevenLabs.
 | `person`                           | grammatical person/number                                | `1st_singular`                      |
 | `hypothetical_regular_conjugation` | conjugation if the verb were regular                     | `so`                                |
 | `conjugation`                      | actual conjugation                                       | `soy`                               |
-| `regular`                          | whether the conjugation matches the regular form         | `false`                             |
+| `regularity_class`                 | how the conjugation differs from the regular form (`totally_regular`, `orthographically_irregular`, or `morphologically_irregular`) | `totally_regular` |
 | `sentence`                         | example sentence using the conjugation                   | `Soy capaz de correr un maratón.`   |
 | `audio_path`                       | path to the audio recording of the sentence              | `audio/1_3_11.mp3`                  |
 

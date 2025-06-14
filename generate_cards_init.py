@@ -1,6 +1,7 @@
 import csv
 
 from regular_form_generator import RegularFormGenerator
+from conjugation_regularity_classifier import ConjugationRegularityClassifier
 from get_conjugation_rae import (
     RAEConjugationFetcher,
     RAEConjugationTransformer,
@@ -9,6 +10,7 @@ from get_conjugation_rae import (
 
 # instantiate a single generator for regular forms
 generator = RegularFormGenerator()
+classifier = ConjugationRegularityClassifier()
 
 verbs_dictionary_conjugations = {}
 
@@ -23,7 +25,7 @@ FIELDNAMES = [
     "conjugation_id",
     "hypothetical_regular_conjugation",
     "conjugation",
-    "regular",
+    "regularity_class",
     "example_sentence",
     "attempts_count",
     "failure_counts",
@@ -153,7 +155,9 @@ def generate_conjugation_table():
                     conjugation_id=f"{verb_id}_{form_id}_{person_id}",
                     hypothetical_regular_conjugation=regular_conjugation,
                     conjugation=conjugation,
-                    regular=str(regular_conjugation == conjugation).lower(),
+                    regularity_class=classifier.classify(
+                        verb, {form: {person: conjugation}}
+                    ),
                 )
                 conjugation_table.append(row)
 
