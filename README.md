@@ -13,6 +13,7 @@ produce audio using ElevenLabs.
    [python-dotenv](https://pypi.org/project/python-dotenv/).
 3. All CSV files use UTF‑8 encoding because they contain accented Spanish
    characters.
+4. Run `pytest` to execute the unit tests.
 
 ## Data files
 
