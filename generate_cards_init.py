@@ -5,6 +5,29 @@ from regular_form_generator import RegularFormGenerator
 # instantiate a single generator for regular forms
 generator = RegularFormGenerator()
 
+# verbs that lack an imperative
+NO_IMPERATIVE_VERBS = {
+    "deber",
+    "delinquir",
+    "gustar",
+    "haber",
+    "nacer",
+    "ocurrir",
+    "poder",
+    "soler",
+    "parecer",
+    "valer",
+    "caber",
+    "yacer",
+    "existir",
+}
+
+# verbs that only use third-person forms
+THIRD_PERSON_ONLY_VERBS = {"gustar", "ocurrir", "resultar", "existir"}
+
+# verbs restricted to certain forms
+SOLER_ALLOWED_FORMS = {3, 5}  # indicativo_presente and indicativo_imperfecto
+
 
 def load_csv_data(filename, id_column, value_column):
     """Load data from CSV file and return as list of tuples"""
@@ -37,6 +60,18 @@ def generate_conjugation_table():
             if form_id == 2 and verb.endswith("se"):
                 continue
 
+            # Skip imperatives for verbs without that form
+            if form_id in [11, 12] and verb in NO_IMPERATIVE_VERBS:
+                continue
+
+            # Skip the imperfect past of "nacer"
+            if verb == "nacer" and form_id == 5:
+                continue
+
+            # Limit "soler" to present and imperfect
+            if verb == "soler" and form_id not in SOLER_ALLOWED_FORMS:
+                continue
+
             # Determine which persons apply to this form
             if form_id <= 2:  # infinitivo, gerundio, participio
                 applicable_persons = [(0, "not_applicable")]
@@ -46,6 +81,12 @@ def generate_conjugation_table():
                 ]  # Skip "not_applicable" and "1st_singular"
             else:  # All other forms use the 6 person conjugations
                 applicable_persons = persons[1:]  # Skip the first "not_applicable"
+
+            # Remove 1st and 2nd persons for certain verbs
+            if verb in THIRD_PERSON_ONLY_VERBS:
+                applicable_persons = [
+                    p for p in applicable_persons if p[0] in {0, 31, 32}
+                ]
 
             for person_id, person in applicable_persons:
                 # Generate hypothetical regular conjugation
