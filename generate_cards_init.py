@@ -1,11 +1,41 @@
 import csv
 
 from regular_form_generator import RegularFormGenerator
+from get_conjugation_rae import (
+    RAEConjugationFetcher,
+    RAEConjugationTransformer,
+    strip_reflexive,
+)
 
 # instantiate a single generator for regular forms
 generator = RegularFormGenerator()
 
 verbs_dictionary_conjugations = {}
+
+# Columns for the output CSV
+FIELDNAMES = [
+    "verb_id",
+    "verb",
+    "form_id",
+    "form",
+    "person_id",
+    "person",
+    "conjugation_id",
+    "hypothetical_regular_conjugation",
+    "conjugation",
+    "regular",
+    "example_sentence",
+    "attempts_count",
+    "failure_counts",
+]
+
+
+def make_row(**kwargs) -> dict:
+    """Return a row dict with default blank values and overrides."""
+    row = {k: "" for k in FIELDNAMES}
+    row.update(kwargs)
+    return row
+
 
 # verbs that lack an imperative
 NO_IMPERATIVE_VERBS = {
@@ -54,6 +84,17 @@ def generate_conjugation_table():
         print("CSV files not found.")
         return
 
+    # Populate verbs_dictionary_conjugations using the RAE crawler
+    fetcher = RAEConjugationFetcher()
+    for _, verb in verbs:
+        base, is_reflexive = strip_reflexive(verb)
+        try:
+            raw = fetcher.get_conjugation(base)
+            transformer = RAEConjugationTransformer(verb, is_reflexive=is_reflexive)
+            verbs_dictionary_conjugations[verb] = transformer.transform(raw)
+        except Exception as exc:  # pragma: no cover - network call
+            raise RuntimeError(f"Failed to fetch conjugations for {verb}") from exc
+
     # Generate the conjugation table
     conjugation_table = []
 
@@ -95,43 +136,32 @@ def generate_conjugation_table():
                 # Generate hypothetical regular conjugation
                 regular_conjugation = generator.generate(verb, form, person)
 
-                row = {
-                    "verb_id": verb_id,
-                    "verb": verb,
-                    "form_id": form_id,
-                    "form": form,
-                    "person_id": person_id,
-                    "person": person,
-                    "conjugation_id": f"{verb_id}_{form_id}_{person_id}",
-                    "hypothetical_regular_conjugation": regular_conjugation,
-                    "conjugation": "",  
-                    "regular": "",
-                    "example_sentence": "",  # Left blank for GPT-4 examples
-                    "attempts_count": "",  # Track number of attempts
-                    "failure_counts": "",  # Track which checks failed
-                }
+                # Look up the real conjugation from the scraped data
+                form_map = verbs_dictionary_conjugations.get(verb, {}).get(form)
+                if isinstance(form_map, dict):
+                    conjugation = form_map.get(person, "")
+                else:
+                    conjugation = form_map if person == "not_applicable" else ""
+
+                row = make_row(
+                    verb_id=verb_id,
+                    verb=verb,
+                    form_id=form_id,
+                    form=form,
+                    person_id=person_id,
+                    person=person,
+                    conjugation_id=f"{verb_id}_{form_id}_{person_id}",
+                    hypothetical_regular_conjugation=regular_conjugation,
+                    conjugation=conjugation,
+                    regular=str(regular_conjugation == conjugation).lower(),
+                )
                 conjugation_table.append(row)
 
     # Write to CSV file
     output_filename = "cards.csv"
-    fieldnames = [
-        "verb_id",
-        "verb",
-        "form_id",
-        "form",
-        "person_id",
-        "person",
-        "conjugation_id",
-        "hypothetical_regular_conjugation",
-        "conjugation",
-        "regular",
-        "example_sentence",
-        "attempts_count",
-        "failure_counts"
-    ]
 
     with open(output_filename, "w", newline="", encoding="utf-8") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer = csv.DictWriter(csvfile, fieldnames=FIELDNAMES)
         writer.writeheader()
         writer.writerows(conjugation_table)
 
