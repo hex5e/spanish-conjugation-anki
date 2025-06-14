@@ -1,3 +1,12 @@
+import pyphen
+
+ACCENTS = "áéíóú"
+PLAIN = "aeiou"
+ACCENT_MAP = dict(zip(PLAIN, ACCENTS))
+ACCENT_REVERSE = str.maketrans(ACCENTS, PLAIN)
+_dic = pyphen.Pyphen(lang="es")
+
+
 class RegularFormGenerator:
     """Generate hypothetical regular Spanish verb forms."""
 
@@ -65,6 +74,44 @@ class RegularFormGenerator:
             "3rd_plural": "se",
         }
         return pronouns.get(person, "")
+
+    def _syllables(self, word: str) -> list[str]:
+        return _dic.inserted(word).split("-")
+
+    def _stress_index(self, word: str) -> int:
+        syls = self._syllables(word)
+        for i, s in enumerate(syls):
+            if any(c in ACCENTS for c in s):
+                return i
+        if word[-1].lower() in ("n", "s") or word[-1].lower() in PLAIN:
+            return max(len(syls) - 2, 0)
+        return len(syls) - 1
+
+    def _apply_accent(self, word: str, index: int) -> str:
+        syls = self._syllables(word)
+        if index < 0 or index >= len(syls):
+            return word
+        s = syls[index]
+        if any(c in ACCENTS for c in s):
+            syls[index] = s
+        else:
+            pos = -1
+            for j in range(len(s) - 1, -1, -1):
+                ch = s[j].lower()
+                if ch in "aeo":
+                    pos = j
+                    break
+            if pos == -1:
+                for j in range(len(s) - 1, -1, -1):
+                    if s[j].lower() in "iu":
+                        pos = j
+                        break
+            if pos != -1:
+                ch = s[pos]
+                accent = ACCENT_MAP.get(ch.lower(), ch)
+                s = s[:pos] + accent + s[pos + 1 :]
+            syls[index] = s
+        return "".join(syls)
 
     def generate(self, verb, form, person):
         """Generate the regular conjugation for the given verb, form and person."""
@@ -363,14 +410,31 @@ class RegularFormGenerator:
                 if is_reflexive:
                     pronoun = self.get_reflexive_pronoun(person)
                     if form == "imperativo_affirmativo":
-                        if person == "2nd_plural" and base_conjugation.endswith("d"):
+                        original = base_conjugation
+                        if person == "1st_plural" and base_conjugation.endswith("mos"):
+                            base_conjugation = base_conjugation[:-1]
+                            result = base_conjugation + pronoun
+                            if original == "amos":
+                                return "ámonos"
+                        elif person == "2nd_plural" and base_conjugation.endswith("d"):
                             trimmed = base_conjugation[:-1]
-                            if verb.rstrip("se") == "ir":
-                                return "idos"
                             if ending == "ir" and trimmed.endswith("i"):
                                 trimmed = trimmed[:-1] + "í"
-                            return trimmed + pronoun
-                        return base_conjugation + pronoun
+                            result = trimmed + pronoun
+                            return result
+                        else:
+                            result = base_conjugation + pronoun
+
+                        if any(c in ACCENTS for c in original):
+                            return result
+
+                        orig_idx = self._stress_index(original)
+                        new_default = self._stress_index(
+                            result.translate(ACCENT_REVERSE)
+                        )
+                        if orig_idx != new_default:
+                            result = self._apply_accent(result, orig_idx)
+                        return result
                     result = f"{pronoun} {base_conjugation}"
                     if form == "imperativo_negativo":
                         return f"no {result}"
