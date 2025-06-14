@@ -3,7 +3,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from regular_form_generator import RegularFormGenerator
+from utilities.regular_form_generator import RegularFormGenerator
 
 gen = RegularFormGenerator()
 

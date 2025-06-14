@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from regular_form_generator import RegularFormGenerator
+from .regular_form_generator import RegularFormGenerator
 
 ACCENTS = "áéíóúÁÉÍÓÚ"
 PLAIN = "aeiouAEIOU"

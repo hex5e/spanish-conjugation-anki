@@ -34,12 +34,12 @@ with open("cards.csv", mode="r", newline="", encoding="utf-8") as csvfile:
     cards_fieldnames = reader.fieldnames
 
 # Read verbs.csv and create a lookup dictionary
-with open("verbs.csv", mode="r", newline="", encoding="utf-8") as csvfile:
+with open("verb_data/verbs.csv", mode="r", newline="", encoding="utf-8") as csvfile:
     reader = csv.DictReader(csvfile)
     verbs_dict = {row["verb"]: row["verb_collocations"] for row in reader}
 
-# Read forms.csv and create a lookup dictionary
-with open("forms.csv", mode="r", newline="", encoding="utf-8") as csvfile:
+# Read tenses.csv and create a lookup dictionary
+with open("verb_data/tenses.csv", mode="r", newline="", encoding="utf-8") as csvfile:
     reader = csv.DictReader(csvfile)
     forms_dict = {row["form"]: row.get("form_trigger_phrases", "") for row in reader}
 

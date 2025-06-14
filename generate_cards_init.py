@@ -1,8 +1,11 @@
 import csv
+from pathlib import Path
 
-from regular_form_generator import RegularFormGenerator
-from conjugation_regularity_classifier import ConjugationRegularityClassifier
-from get_conjugation_rae import (
+from utilities.regular_form_generator import RegularFormGenerator
+from utilities.conjugation_regularity_classifier import (
+    ConjugationRegularityClassifier,
+)
+from utilities.get_conjugation_rae import (
     RAEConjugationFetcher,
     RAEConjugationTransformer,
     strip_reflexive,
@@ -78,9 +81,11 @@ def generate_conjugation_table():
     """Generate the main conjugation table"""
     # Try to load from CSV files first
     try:
-        verbs = load_csv_data("verbs.csv", "verb_id", "verb")
-        forms = load_csv_data("forms.csv", "form_id", "form")
-        persons = load_csv_data("persons.csv", "person_id", "person")
+        verbs = load_csv_data(Path("verb_data") / "verbs.csv", "verb_id", "verb")
+        forms = load_csv_data(Path("verb_data") / "tenses.csv", "form_id", "form")
+        persons = load_csv_data(
+            Path("verb_data") / "persons.csv", "person_id", "person"
+        )
         print("Loaded data from existing CSV files")
     except FileNotFoundError:
         print("CSV files not found.")

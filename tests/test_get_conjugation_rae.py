@@ -4,8 +4,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 import json
-from get_conjugation_rae import RAEConjugationFetcher
-from get_conjugation_rae import RAEConjugationTransformer
+from utilities.get_conjugation_rae import RAEConjugationFetcher
+from utilities.get_conjugation_rae import RAEConjugationTransformer
 
 
 def test_amar():
