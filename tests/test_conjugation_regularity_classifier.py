@@ -8,9 +8,9 @@ from conjugation_regularity_classifier import ConjugationRegularityClassifier
 classifier = ConjugationRegularityClassifier()
 
 
-def test_totally_regular():
+def test_regular():
     forms = {"indicativo_presente": {"1st_singular": "hablo"}}
-    assert classifier.classify("hablar", forms) == "totally_regular"
+    assert classifier.classify("hablar", forms) == "regular"
 
 
 def test_morphological_irregular():
