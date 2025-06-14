@@ -759,7 +759,7 @@ def test_irse():
     # Imperativo afirmativo (no 1st person singular)
     assert gen.generate("irse", "imperativo_affirmativo", "2nd_singular") == "ete"
     assert gen.generate("irse", "imperativo_affirmativo", "3rd_singular") == "ase"
-    assert gen.generate("irse", "imperativo_affirmativo", "1st_plural") == "amonos"
+    assert gen.generate("irse", "imperativo_affirmativo", "1st_plural") == "ámonos"
     assert gen.generate("irse", "imperativo_affirmativo", "2nd_plural") == "íos"
     assert gen.generate("irse", "imperativo_affirmativo", "3rd_plural") == "anse"
 
