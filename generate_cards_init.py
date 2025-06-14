@@ -16,6 +16,7 @@ NO_IMPERATIVE_VERBS = {
     "poder",
     "soler",
     "parecer",
+    "resultar",
     "valer",
     "caber",
     "yacer",
