@@ -300,7 +300,7 @@ def test_reirse():
     # Indicativo pretérito
     assert out["indicativo_preterito"]["1st_singular"] == "me reí"
     assert out["indicativo_preterito"]["2nd_singular"] == "te reíste"
-    assert out["indicativo_preterito"]["3rd_singular"] == "se rió"
+    assert out["indicativo_preterito"]["3rd_singular"] == "se rio"
     assert out["indicativo_preterito"]["1st_plural"] == "nos reímos"
     assert out["indicativo_preterito"]["2nd_plural"] == "os reísteis"
     assert out["indicativo_preterito"]["3rd_plural"] == "se rieron"
@@ -334,7 +334,7 @@ def test_reirse():
     assert out["subjuntivo_presente"]["2nd_singular"] == "te rías"
     assert out["subjuntivo_presente"]["3rd_singular"] == "se ría"
     assert out["subjuntivo_presente"]["1st_plural"] == "nos riamos"
-    assert out["subjuntivo_presente"]["2nd_plural"] == "os riáis"
+    assert out["subjuntivo_presente"]["2nd_plural"] == "os riais"
     assert out["subjuntivo_presente"]["3rd_plural"] == "se rían"
 
     # Subjuntivo imperfecto
@@ -364,5 +364,5 @@ def test_reirse():
     assert out["imperativo_negativo"]["2nd_singular"] == "no te rías"
     assert out["imperativo_negativo"]["3rd_singular"] == "no se ría"
     assert out["imperativo_negativo"]["1st_plural"] == "no nos riamos"
-    assert out["imperativo_negativo"]["2nd_plural"] == "no os riáis"
+    assert out["imperativo_negativo"]["2nd_plural"] == "no os riais"
     assert out["imperativo_negativo"]["3rd_plural"] == "no se rían"

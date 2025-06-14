@@ -83,7 +83,7 @@ def test_darse():
 
     # Imperativo afirmativo
     assert out["imperativo_affirmativo"]["2nd_singular"] == "date"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "dése"
+    assert out["imperativo_affirmativo"]["3rd_singular"] == "dese"
     assert out["imperativo_affirmativo"]["1st_plural"] == "démonos"
     assert out["imperativo_affirmativo"]["2nd_plural"] == "daos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "dense"
