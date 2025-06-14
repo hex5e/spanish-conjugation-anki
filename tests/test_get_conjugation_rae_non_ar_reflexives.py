@@ -278,7 +278,7 @@ def test_irse():
     assert out["imperativo_negativo"]["3rd_plural"] == "no se vayan"
 
 
-def test_reirse():
+def test_reírse():
     fetcher = RAEConjugationFetcher()
     base, is_reflexive = strip_reflexive("reírse")
     raw = fetcher.get_conjugation(base)
