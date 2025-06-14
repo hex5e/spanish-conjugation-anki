@@ -3,7 +3,9 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from conjugation_regularity_classifier import ConjugationRegularityClassifier
+from utilities.conjugation_regularity_classifier import (
+    ConjugationRegularityClassifier,
+)
 
 classifier = ConjugationRegularityClassifier()
 
