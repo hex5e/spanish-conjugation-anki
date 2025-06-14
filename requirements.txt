@@ -1,5 +1,5 @@
 ipykernel
-dotenv
+python-dotenv
 elevenlabs
 openai
 pandas
