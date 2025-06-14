@@ -220,6 +220,47 @@ class RAEConjugationTransformer:
                 result[person] = self._clean(value)
         return result
 
+    def _data_is_reflexive(self, out: Dict[str, dict | str]) -> bool:
+        pronouns = {"me", "te", "se", "nos", "os"}
+        for mapping in out.values():
+            if isinstance(mapping, dict):
+                values = mapping.values()
+            else:
+                values = [mapping]
+            for form in values:
+                words = str(form).split()
+                if any(w in pronouns for w in words):
+                    return True
+        return False
+
+    def _normalize_reflexive_forms(self, out: Dict[str, dict | str]) -> None:
+        pronouns = ["me", "te", "se", "nos", "os"]
+        for key, value in out.items():
+            if isinstance(value, dict):
+                mapping = value
+            else:
+                mapping = {"": value}
+            for person, form in list(mapping.items()):
+                for p in pronouns:
+                    if isinstance(form, str) and form.endswith(f" {p}"):
+                        mapping[person] = form.replace(f" {p}", p)
+                if (
+                    key == "imperativo_affirmativo"
+                    and person == "1st_plural"
+                    and isinstance(mapping.get(person), str)
+                    and mapping[person].startswith("nos ")
+                ):
+                    base_form = mapping[person][4:]
+                    if self.verb.rstrip("se") == "ir":
+                        base_form = "vamos"
+                    temp = {"imperativo_affirmativo": {"1st_plural": base_form}}
+                    self._add_reflexive(temp)
+                    mapping[person] = temp["imperativo_affirmativo"]["1st_plural"]
+            if not isinstance(value, dict):
+                out[key] = mapping[""]
+        if "participio" in out:
+            out["participio"] = ""
+
     def _add_reflexive(self, out: Dict[str, dict | str]) -> None:
         pronouns = {
             "1st_singular": "me",
@@ -237,7 +278,11 @@ class RAEConjugationTransformer:
 
         def attach_affirmative(form: str, pron: str) -> str:
             original = form
+            if base == "dar" and original == "dé" and pron == "se":
+                return "dese"
             if pron == "nos" and form.endswith("mos"):
+                if base == "ir" and original == "vayamos":
+                    return "vámonos"
                 form = form[:-1]
                 result = form + pron
             elif pron == "os" and form.endswith("d"):
@@ -339,7 +384,10 @@ class RAEConjugationTransformer:
             if neg:
                 out["imperativo_negativo"] = neg
 
-        if self.is_reflexive:
+        page_reflexive = self._data_is_reflexive(out)
+        if page_reflexive:
+            self._normalize_reflexive_forms(out)
+        if self.is_reflexive and not page_reflexive:
             self._add_reflexive(out)
 
         return out
