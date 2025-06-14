@@ -339,7 +339,10 @@ class RAEConjugationTransformer:
             if neg:
                 out["imperativo_negativo"] = neg
 
-        if self.is_reflexive:
+        raw_inf = data.get("Formas no personales", {}).get("Infinitivo", {}).get("", "")
+        raw_is_reflexive = raw_inf.strip().endswith("se")
+
+        if self.is_reflexive and not raw_is_reflexive:
             self._add_reflexive(out)
 
         return out
