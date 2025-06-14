@@ -83,4 +83,4 @@ class ConjugationRegularityClassifier:
             return "morphologically_irregular"
         if any(r == "orthographic" for r in results):
             return "orthographically_irregular"
-        return "totally_regular"
+        return "regular"
