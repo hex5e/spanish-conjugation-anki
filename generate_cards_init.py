@@ -104,8 +104,12 @@ def generate_conjugation_table():
                     "person": person,
                     "conjugation_id": f"{verb_id}_{form_id}_{person_id}",
                     "hypothetical_regular_conjugation": regular_conjugation,
+<<<<<<< HEAD
                     "conjugation": "",  
                     "regular": "",
+=======
+                    "conjugation": "",  # Left blank as requested
+>>>>>>> e4bd9a435ff84909f99771089c38e97a9dbc2ab0
                     "example_sentence": "",  # Left blank for GPT-4 examples
                     "attempts_count": "",  # Track number of attempts
                     "failure_counts": "",  # Track which checks failed
@@ -124,7 +128,10 @@ def generate_conjugation_table():
         "conjugation_id",
         "hypothetical_regular_conjugation",
         "conjugation",
+<<<<<<< HEAD
         "regular",
+=======
+>>>>>>> e4bd9a435ff84909f99771089c38e97a9dbc2ab0
         "example_sentence",
         "attempts_count",
         "failure_counts"
