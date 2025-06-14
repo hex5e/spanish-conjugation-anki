@@ -3,6 +3,7 @@ import csv
 import random
 import json
 import time
+import re
 
 # Configuration
 MODEL = "gpt-4.1"  # Use "o3-mini" for faster processing
@@ -64,6 +65,7 @@ for i, card in enumerate(cards_rows):
     verb = card["verb"]
     form = card["form"]
     person = card["person"]
+    conjugation = card["conjugation"]
 
     # Skip if already has verified content
     if card.get("conjugation_with_verification") and card.get(
@@ -78,6 +80,7 @@ for i, card in enumerate(cards_rows):
     print(f"  verb: {verb}")
     print(f"  form: {form}")
     print(f"  person: {person}")
+    print(f"  conjugation: {conjugation}")
 
     # Get verb collocations
     verb_collocations = []
@@ -95,14 +98,6 @@ for i, card in enumerate(cards_rows):
         continue
 
     # Prepare specifications
-    reflexive_specification = (
-        "Include the reflexive pronoun in the conjugation; "
-        if verb.endswith("se")
-        else ""
-    )
-    imperativo_negativo_specification = (
-        "Include 'no' in the conjugation; " if form == "imperativo_negativo" else ""
-    )
     imperativo_specification = (
         "Use exclamation marks; "
         if "imperativo" in form
@@ -112,9 +107,9 @@ for i, card in enumerate(cards_rows):
     # Initialize or update failure tracking
     if card.get("failure_counts"):
         failure_counts = json.loads(card["failure_counts"])
+        failure_counts.pop("correct_conjugation", None)
     else:
         failure_counts = {
-            "correct_conjugation": 0,
             "conjugation_in_sentence": 0,
             "grammar_ok": 0,
             "trigger_in_sentence": 0,
@@ -140,6 +135,7 @@ for i, card in enumerate(cards_rows):
         generation_prompt = f"""
 You are given:
 - verb: "{verb}"
+- conjugation: "{conjugation}"
 - recommended collocations: {selected_collocations}
 - form: "{form}"
 - person: "{person}"
@@ -147,14 +143,13 @@ You are given:
 
 
 TASK
-1. Create a JSON object with exactly two keys:
-   • "conjugation" → the verb conjugated in the specified form. {reflexive_specification}{imperativo_negativo_specification}
+1. Create a JSON object with exactly one key:
    • "example_sentence" → one grammatically correct, context-appropriate sentence (Spanish). {imperativo_specification}
-2. The sentence must include the conjugated verb, the form trigger phrase, and at least one recommended collocation. 
+2. The sentence must include the provided conjugation, the form trigger phrase, and at least one recommended collocation.
 3. Output ONLY the JSON object—no markdown, comments, or extra text.
 
 Example output
-{{"conjugation":"hablo","example_sentence":"Yo hablo español con mis compañeros de trabajo todos los días."}}
+{{"example_sentence":"Yo hablo español con mis compañeros de trabajo todos los días."}}
 """
 
         try:
@@ -176,10 +171,18 @@ Example output
             )
 
             generation_response = json.loads(response.choices[0].message.content)
-            conjugation = generation_response["conjugation"]
             example_sentence = generation_response["example_sentence"]
 
-            print(f"    Generated: {conjugation} - {example_sentence}...")
+            print(f"    Generated sentence: {example_sentence}...")
+
+            # Check if the conjugation appears in the sentence (case-insensitive)
+            conjugation_regex = re.compile(
+                rf"\b{re.escape(conjugation)}\b", re.IGNORECASE
+            )
+            conjugation_in_sentence = bool(conjugation_regex.search(example_sentence))
+            if not conjugation_in_sentence:
+                failure_counts["conjugation_in_sentence"] += 1
+                print("    \u2717 Failed: conjugation_in_sentence")
 
             # Verify the generation
             verification_prompt = f"""
@@ -191,21 +194,15 @@ You are given
 - conjugation: "{conjugation}"
 - example_sentence: "{example_sentence}"
 
-TASK  
-Return **only** a JSON object with four Boolean keys that independently signal whether each requirement below is satisfied (true / false).
+TASK
+Return **only** a JSON object with two Boolean keys that independently signal whether each requirement below is satisfied (true / false).
 
-Checks  
-1. "correct_conjugation" - the supplied **conjugation** is the right form of **verb** for the specified **form** and **person**.  
-   {reflexive_specification}{imperativo_specification}
-2. "conjugation_in_sentence" - that exact **conjugation** string appears in **example_sentence**.
-3. "grammar_ok" - **example_sentence** is grammatically correct Spanish.  
-   {imperativo_negativo_specification}
-4. "trigger_in_sentence" - **example_sentence** contains **form_trigger_phrase** (case-insensitive match is acceptable).
+Checks
+1. "grammar_ok" - **example_sentence** is grammatically correct Spanish.
+2. "trigger_in_sentence" - **example_sentence** contains **form_trigger_phrase** (case-insensitive match is acceptable).
 
 **Output format**
 {{
-  "correct_conjugation": true,
-  "conjugation_in_sentence": true,
   "grammar_ok": true,
   "trigger_in_sentence": true
 }}
@@ -236,7 +233,7 @@ Checks
             )
 
             # Check if all verifications passed
-            all_passed = all(verification_result.values())
+            all_passed = conjugation_in_sentence and all(verification_result.values())
 
             if all_passed:
                 # Success! Update the row
@@ -307,7 +304,6 @@ print(f"Still failed after max attempts: {failed_rows}")
 if failed_rows > 0:
     print("\nFailure analysis (all attempts including previous runs):")
     total_failures = {
-        "correct_conjugation": 0,
         "conjugation_in_sentence": 0,
         "grammar_ok": 0,
         "trigger_in_sentence": 0,
