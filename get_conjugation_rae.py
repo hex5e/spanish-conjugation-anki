@@ -64,13 +64,13 @@ class RAEConjugationFetcher:
         rows = list(table.find_all("tr"))
         it = iter(rows)
         for row in it:
-            headings = [c.get_text(" ", strip=True) for c in row.find_all("th")]
+            headings = [c.get_text("", strip=True) for c in row.find_all("th")]
             if not headings:
                 continue
             next_row = next(it, None)
             if not next_row:
                 break
-            values = [c.get_text(" ", strip=True) for c in next_row.find_all("td")]
+            values = [c.get_text("", strip=True) for c in next_row.find_all("td")]
             for h, v in zip(headings, values):
                 data[h] = v
         return data
@@ -78,12 +78,12 @@ class RAEConjugationFetcher:
     def _parse_personal(self, table: BeautifulSoup) -> Dict[str, Dict[str, str]]:
         """Parse tables that contain pronoun based conjugations."""
         rows = table.find_all("tr")
-        headers = [c.get_text(" ", strip=True) for c in rows[0].find_all(["th", "td"])]
+        headers = [c.get_text("", strip=True) for c in rows[0].find_all(["th", "td"])]
         tenses = headers[3:]
         result: Dict[str, Dict[str, str]] = {t: {} for t in tenses}
 
         for row in rows[1:]:
-            cells = [c.get_text(" ", strip=True) for c in row.find_all(["th", "td"])]
+            cells = [c.get_text("", strip=True) for c in row.find_all(["th", "td"])]
             if len(cells) == len(tenses) + 3:
                 _, _, pronoun = cells[:3]
                 forms = cells[3:]
