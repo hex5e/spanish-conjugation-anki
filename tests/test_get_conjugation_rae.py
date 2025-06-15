@@ -83,11 +83,11 @@ def test_amar():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "amaren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "ama"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "ame"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "amemos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "amad"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "amen"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "ama"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "ame"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "amemos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "amad"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "amen"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no ames"
@@ -172,11 +172,11 @@ def test_ser():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "fueren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "sé"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "sea"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "seamos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "sed"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "sean"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "sé"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "sea"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "seamos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "sed"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "sean"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no seas"
@@ -261,11 +261,11 @@ def test_recibir():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "recibieren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "recibe"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "reciba"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "recibamos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "recibid"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "reciban"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "recibe"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "reciba"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "recibamos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "recibid"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "reciban"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no recibas"
@@ -350,11 +350,11 @@ def test_oír():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "oyeren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "oye"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "oiga"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "oigamos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "oíd"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "oigan"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "oye"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "oiga"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "oigamos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "oíd"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "oigan"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no oigas"

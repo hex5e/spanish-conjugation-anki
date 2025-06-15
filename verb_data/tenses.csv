@@ -10,5 +10,5 @@ form_id,form,form_trigger_phrases
 8,subjuntivo_presente,[yo/tú/etc + (present) querer/esperar/desear/preferir + que; ojalá (que); yo/tú/etc + (present) alegrar/molestar/sentir/sorprender/temer/dudar/creer + que; en caso de que; para que; antes de que; a menos que; con tal de que; sin que]
 9,subjuntivo_imperfecto,[yo/tú/etc + (imperfecto) querer/esperar/desear/preferir + que; yo/tú/etc + (imperfecto) alegrar/molestar/sentir/sorprender/temer/dudar/creer + que; era + importante/necesario/una lástima/raro + que; si + (subjuntivo imperfecto) + entronces + (condicional)]
 10,subjuntivo_futuro,[El que lo hiciere; quien hubiere causado daño; el que dijere falsedad; si alguien cometiere fraude; Cualquiera que viniere]
-11,imperativo_affirmativo,[¡Señor(es)!; ¡Señora(s)!; ¡Jefe(s)!]
+11,imperativo_afirmativo,[¡Señor(es)!; ¡Señora(s)!; ¡Jefe(s)!]
 12,imperativo_negativo,[¡Señor(es)!; ¡Señora(s)!; ¡Jefe(s)!]
