@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from typing import Dict, Iterable, Tuple
 
 import pyphen
@@ -174,7 +175,16 @@ class RAEConjugationTransformer:
         return text.strip()
 
     def _syllables(self, word: str) -> list[str]:
-        return _dic.inserted(word).split("-")
+        syls = _dic.inserted(word).split("-")
+        result: list[str] = []
+        for syl in syls:
+            parts = re.split(
+                r"(?<=[aeiouáéíóúü])(?=[^aeiouáéíóúü]+[aeiouáéíóúü])",
+                syl,
+                flags=re.IGNORECASE,
+            )
+            result.extend([p for p in parts if p])
+        return result
 
     def _stress_index(self, word: str) -> int:
         syls = self._syllables(word)

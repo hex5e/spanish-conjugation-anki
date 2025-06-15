@@ -7,6 +7,7 @@ from utilities.get_conjugation_rae import RAEConjugationFetcher
 from utilities.get_conjugation_rae import RAEConjugationTransformer
 from utilities.get_conjugation_rae import strip_reflexive
 
+
 def test_arrepentirse():
     fetcher = RAEConjugationFetcher()
     base, is_reflexive = strip_reflexive("arrepentirse")
@@ -22,6 +23,7 @@ def test_arrepentirse():
     assert out["imperativo_affirmativo"]["1st_plural"] == "arrepintámonos"
     assert out["imperativo_affirmativo"]["2nd_plural"] == "arrepentíos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "arrepiéntanse"
+
 
 def test_bajarse():
     fetcher = RAEConjugationFetcher()
@@ -39,6 +41,7 @@ def test_bajarse():
     assert out["imperativo_affirmativo"]["2nd_plural"] == "bajaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "bájense"
 
+
 def test_bañarse():
     fetcher = RAEConjugationFetcher()
     raw = fetcher.get_conjugation("bañar")
@@ -54,6 +57,7 @@ def test_bañarse():
     assert out["imperativo_affirmativo"]["2nd_plural"] == "bañaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "báñense"
 
+
 def test_darse():
     fetcher = RAEConjugationFetcher()
     raw = fetcher.get_conjugation("dar")
@@ -68,6 +72,7 @@ def test_darse():
     assert out["imperativo_affirmativo"]["1st_plural"] == "démonos"
     assert out["imperativo_affirmativo"]["2nd_plural"] == "daos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "dense"
+
 
 def test_echarse():
     fetcher = RAEConjugationFetcher()
@@ -85,6 +90,7 @@ def test_echarse():
     assert out["imperativo_affirmativo"]["2nd_plural"] == "echaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "échense"
 
+
 def test_endeudarse():
     fetcher = RAEConjugationFetcher()
     base, is_reflexive = strip_reflexive("endeudarse")
@@ -100,6 +106,7 @@ def test_endeudarse():
     assert out["imperativo_affirmativo"]["1st_plural"] == "endeudémonos"
     assert out["imperativo_affirmativo"]["2nd_plural"] == "endeudaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "endéudense"
+
 
 def test_esforzarse():
     fetcher = RAEConjugationFetcher()
@@ -117,6 +124,7 @@ def test_esforzarse():
     assert out["imperativo_affirmativo"]["2nd_plural"] == "esforzaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "esfuércense"
 
+
 def test_fijarse():
     fetcher = RAEConjugationFetcher()
     base, is_reflexive = strip_reflexive("fijarse")
@@ -132,6 +140,7 @@ def test_fijarse():
     assert out["imperativo_affirmativo"]["1st_plural"] == "fijémonos"
     assert out["imperativo_affirmativo"]["2nd_plural"] == "fijaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "fíjense"
+
 
 def test_irse():
     fetcher = RAEConjugationFetcher()
@@ -149,6 +158,7 @@ def test_irse():
     assert out["imperativo_affirmativo"]["2nd_plural"] == "idos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "váyanse"
 
+
 def test_levantarse():
     fetcher = RAEConjugationFetcher()
     base, is_reflexive = strip_reflexive("levantarse")
@@ -165,6 +175,7 @@ def test_levantarse():
     assert out["imperativo_affirmativo"]["2nd_plural"] == "levantaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "levántense"
 
+
 def test_liarse():
     fetcher = RAEConjugationFetcher()
     raw = fetcher.get_conjugation("liar")
@@ -179,6 +190,7 @@ def test_liarse():
     assert out["imperativo_affirmativo"]["1st_plural"] == "liémonos"
     assert out["imperativo_affirmativo"]["2nd_plural"] == "liaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "líense"
+
 
 def test_meterse():
     fetcher = RAEConjugationFetcher()
@@ -196,6 +208,7 @@ def test_meterse():
     assert out["imperativo_affirmativo"]["2nd_plural"] == "meteos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "métanse"
 
+
 def test_quedarse():
     fetcher = RAEConjugationFetcher()
     base, is_reflexive = strip_reflexive("quedarse")
@@ -211,6 +224,7 @@ def test_quedarse():
     assert out["imperativo_affirmativo"]["1st_plural"] == "quedémonos"
     assert out["imperativo_affirmativo"]["2nd_plural"] == "quedaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "quédense"
+
 
 def test_quejarse():
     fetcher = RAEConjugationFetcher()
@@ -228,6 +242,7 @@ def test_quejarse():
     assert out["imperativo_affirmativo"]["2nd_plural"] == "quejaos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "quéjense"
 
+
 def test_reírse():
     fetcher = RAEConjugationFetcher()
     base, is_reflexive = strip_reflexive("reírse")
@@ -243,6 +258,7 @@ def test_reírse():
     assert out["imperativo_affirmativo"]["1st_plural"] == "riámonos"
     assert out["imperativo_affirmativo"]["2nd_plural"] == "reíos"
     assert out["imperativo_affirmativo"]["3rd_plural"] == "ríanse"
+
 
 def test_subirse():
     fetcher = RAEConjugationFetcher()
