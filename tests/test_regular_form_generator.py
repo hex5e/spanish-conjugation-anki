@@ -898,3 +898,13 @@ def test_meterse():
         gen.generate("meterse", "imperativo_negativo", "2nd_plural") == "no os metáis"
     )
     assert gen.generate("meterse", "imperativo_negativo", "3rd_plural") == "no se metan"
+
+
+def test_echarse_imperativo_affirmativo():
+    assert gen.generate("echarse", "imperativo_affirmativo", "2nd_singular") == "échate"
+    assert gen.generate("echarse", "imperativo_affirmativo", "3rd_singular") == "échese"
+    assert (
+        gen.generate("echarse", "imperativo_affirmativo", "1st_plural") == "echémonos"
+    )
+    assert gen.generate("echarse", "imperativo_affirmativo", "2nd_plural") == "echaos"
+    assert gen.generate("echarse", "imperativo_affirmativo", "3rd_plural") == "échense"
