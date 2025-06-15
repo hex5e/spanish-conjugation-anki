@@ -199,7 +199,7 @@ def generate_conjugation_table():
         ("hablar", "imperativo_negativo", "2nd_singular"),
         ("levantarse", "indicativo_presente", "1st_singular"),
         ("levantarse", "gerundio", "not_applicable"),
-        ("levantarse", "imperativo_affirmativo", "2nd_singular"),
+        ("levantarse", "imperativo_afirmativo", "2nd_singular"),
         ("levantarse", "imperativo_negativo", "2nd_singular"),
         ("ducharse", "indicativo_futuro", "3rd_plural"),
     ]

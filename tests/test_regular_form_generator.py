@@ -79,11 +79,11 @@ def test_hablar():
     assert gen.generate("hablar", "subjuntivo_futuro", "3rd_plural") == "hablaren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("hablar", "imperativo_affirmativo", "2nd_singular") == "habla"
-    assert gen.generate("hablar", "imperativo_affirmativo", "3rd_singular") == "hable"
-    assert gen.generate("hablar", "imperativo_affirmativo", "1st_plural") == "hablemos"
-    assert gen.generate("hablar", "imperativo_affirmativo", "2nd_plural") == "hablad"
-    assert gen.generate("hablar", "imperativo_affirmativo", "3rd_plural") == "hablen"
+    assert gen.generate("hablar", "imperativo_afirmativo", "2nd_singular") == "habla"
+    assert gen.generate("hablar", "imperativo_afirmativo", "3rd_singular") == "hable"
+    assert gen.generate("hablar", "imperativo_afirmativo", "1st_plural") == "hablemos"
+    assert gen.generate("hablar", "imperativo_afirmativo", "2nd_plural") == "hablad"
+    assert gen.generate("hablar", "imperativo_afirmativo", "3rd_plural") == "hablen"
 
     # Imperativo negativo (no 1st person singular)
     assert gen.generate("hablar", "imperativo_negativo", "2nd_singular") == "no hables"
@@ -164,11 +164,11 @@ def test_deber():
     assert gen.generate("deber", "subjuntivo_futuro", "3rd_plural") == "debieren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("deber", "imperativo_affirmativo", "2nd_singular") == "debe"
-    assert gen.generate("deber", "imperativo_affirmativo", "3rd_singular") == "deba"
-    assert gen.generate("deber", "imperativo_affirmativo", "1st_plural") == "debamos"
-    assert gen.generate("deber", "imperativo_affirmativo", "2nd_plural") == "debed"
-    assert gen.generate("deber", "imperativo_affirmativo", "3rd_plural") == "deban"
+    assert gen.generate("deber", "imperativo_afirmativo", "2nd_singular") == "debe"
+    assert gen.generate("deber", "imperativo_afirmativo", "3rd_singular") == "deba"
+    assert gen.generate("deber", "imperativo_afirmativo", "1st_plural") == "debamos"
+    assert gen.generate("deber", "imperativo_afirmativo", "2nd_plural") == "debed"
+    assert gen.generate("deber", "imperativo_afirmativo", "3rd_plural") == "deban"
 
     # Imperativo negativo (no 1st person singular)
     assert gen.generate("deber", "imperativo_negativo", "2nd_singular") == "no debas"
@@ -249,11 +249,11 @@ def test_vivir():
     assert gen.generate("vivir", "subjuntivo_futuro", "3rd_plural") == "vivieren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("vivir", "imperativo_affirmativo", "2nd_singular") == "vive"
-    assert gen.generate("vivir", "imperativo_affirmativo", "3rd_singular") == "viva"
-    assert gen.generate("vivir", "imperativo_affirmativo", "1st_plural") == "vivamos"
-    assert gen.generate("vivir", "imperativo_affirmativo", "2nd_plural") == "vivid"
-    assert gen.generate("vivir", "imperativo_affirmativo", "3rd_plural") == "vivan"
+    assert gen.generate("vivir", "imperativo_afirmativo", "2nd_singular") == "vive"
+    assert gen.generate("vivir", "imperativo_afirmativo", "3rd_singular") == "viva"
+    assert gen.generate("vivir", "imperativo_afirmativo", "1st_plural") == "vivamos"
+    assert gen.generate("vivir", "imperativo_afirmativo", "2nd_plural") == "vivid"
+    assert gen.generate("vivir", "imperativo_afirmativo", "3rd_plural") == "vivan"
 
     # Imperativo negativo (no 1st person singular)
     assert gen.generate("vivir", "imperativo_negativo", "2nd_singular") == "no vivas"
@@ -334,11 +334,11 @@ def test_oír():
     assert gen.generate("oír", "subjuntivo_futuro", "3rd_plural") == "oieren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("oír", "imperativo_affirmativo", "2nd_singular") == "oe"
-    assert gen.generate("oír", "imperativo_affirmativo", "3rd_singular") == "oa"
-    assert gen.generate("oír", "imperativo_affirmativo", "1st_plural") == "oamos"
-    assert gen.generate("oír", "imperativo_affirmativo", "2nd_plural") == "oid"
-    assert gen.generate("oír", "imperativo_affirmativo", "3rd_plural") == "oan"
+    assert gen.generate("oír", "imperativo_afirmativo", "2nd_singular") == "oe"
+    assert gen.generate("oír", "imperativo_afirmativo", "3rd_singular") == "oa"
+    assert gen.generate("oír", "imperativo_afirmativo", "1st_plural") == "oamos"
+    assert gen.generate("oír", "imperativo_afirmativo", "2nd_plural") == "oid"
+    assert gen.generate("oír", "imperativo_afirmativo", "3rd_plural") == "oan"
 
     # Imperativo negativo (no 1st person singular)
     assert gen.generate("oír", "imperativo_negativo", "2nd_singular") == "no oas"
@@ -544,23 +544,22 @@ def test_levantarse():
 
     # Imperativo afirmativo (no 1st person singular)
     assert (
-        gen.generate("levantarse", "imperativo_affirmativo", "2nd_singular")
+        gen.generate("levantarse", "imperativo_afirmativo", "2nd_singular")
         == "levántate"
     )
     assert (
-        gen.generate("levantarse", "imperativo_affirmativo", "3rd_singular")
+        gen.generate("levantarse", "imperativo_afirmativo", "3rd_singular")
         == "levántese"
     )
     assert (
-        gen.generate("levantarse", "imperativo_affirmativo", "1st_plural")
+        gen.generate("levantarse", "imperativo_afirmativo", "1st_plural")
         == "levantémonos"
     )
     assert (
-        gen.generate("levantarse", "imperativo_affirmativo", "2nd_plural")
-        == "levantaos"
+        gen.generate("levantarse", "imperativo_afirmativo", "2nd_plural") == "levantaos"
     )
     assert (
-        gen.generate("levantarse", "imperativo_affirmativo", "3rd_plural")
+        gen.generate("levantarse", "imperativo_afirmativo", "3rd_plural")
         == "levántense"
     )
 
@@ -670,11 +669,11 @@ def test_reírse():
     assert gen.generate("reírse", "subjuntivo_futuro", "3rd_plural") == "se reieren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("reírse", "imperativo_affirmativo", "2nd_singular") == "reete"
-    assert gen.generate("reírse", "imperativo_affirmativo", "3rd_singular") == "rease"
-    assert gen.generate("reírse", "imperativo_affirmativo", "1st_plural") == "reámonos"
-    assert gen.generate("reírse", "imperativo_affirmativo", "2nd_plural") == "reíos"
-    assert gen.generate("reírse", "imperativo_affirmativo", "3rd_plural") == "reanse"
+    assert gen.generate("reírse", "imperativo_afirmativo", "2nd_singular") == "reete"
+    assert gen.generate("reírse", "imperativo_afirmativo", "3rd_singular") == "rease"
+    assert gen.generate("reírse", "imperativo_afirmativo", "1st_plural") == "reámonos"
+    assert gen.generate("reírse", "imperativo_afirmativo", "2nd_plural") == "reíos"
+    assert gen.generate("reírse", "imperativo_afirmativo", "3rd_plural") == "reanse"
 
     # Imperativo negativo (no 1st person singular)
     assert gen.generate("reírse", "imperativo_negativo", "2nd_singular") == "no te reas"
@@ -757,11 +756,11 @@ def test_irse():
     assert gen.generate("irse", "subjuntivo_futuro", "3rd_plural") == "se ieren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("irse", "imperativo_affirmativo", "2nd_singular") == "ete"
-    assert gen.generate("irse", "imperativo_affirmativo", "3rd_singular") == "ase"
-    assert gen.generate("irse", "imperativo_affirmativo", "1st_plural") == "ámonos"
-    assert gen.generate("irse", "imperativo_affirmativo", "2nd_plural") == "íos"
-    assert gen.generate("irse", "imperativo_affirmativo", "3rd_plural") == "anse"
+    assert gen.generate("irse", "imperativo_afirmativo", "2nd_singular") == "ete"
+    assert gen.generate("irse", "imperativo_afirmativo", "3rd_singular") == "ase"
+    assert gen.generate("irse", "imperativo_afirmativo", "1st_plural") == "ámonos"
+    assert gen.generate("irse", "imperativo_afirmativo", "2nd_plural") == "íos"
+    assert gen.generate("irse", "imperativo_afirmativo", "3rd_plural") == "anse"
 
     # Imperativo negativo (no 1st person singular)
     assert gen.generate("irse", "imperativo_negativo", "2nd_singular") == "no te as"
@@ -876,13 +875,11 @@ def test_meterse():
     assert gen.generate("meterse", "subjuntivo_futuro", "3rd_plural") == "se metieren"
 
     # Imperativo afirmativo (no 1st person singular)
-    assert gen.generate("meterse", "imperativo_affirmativo", "2nd_singular") == "métete"
-    assert gen.generate("meterse", "imperativo_affirmativo", "3rd_singular") == "métase"
-    assert (
-        gen.generate("meterse", "imperativo_affirmativo", "1st_plural") == "metámonos"
-    )
-    assert gen.generate("meterse", "imperativo_affirmativo", "2nd_plural") == "meteos"
-    assert gen.generate("meterse", "imperativo_affirmativo", "3rd_plural") == "métanse"
+    assert gen.generate("meterse", "imperativo_afirmativo", "2nd_singular") == "métete"
+    assert gen.generate("meterse", "imperativo_afirmativo", "3rd_singular") == "métase"
+    assert gen.generate("meterse", "imperativo_afirmativo", "1st_plural") == "metámonos"
+    assert gen.generate("meterse", "imperativo_afirmativo", "2nd_plural") == "meteos"
+    assert gen.generate("meterse", "imperativo_afirmativo", "3rd_plural") == "métanse"
 
     # Imperativo negativo (no 1st person singular)
     assert (
@@ -900,11 +897,9 @@ def test_meterse():
     assert gen.generate("meterse", "imperativo_negativo", "3rd_plural") == "no se metan"
 
 
-def test_echarse_imperativo_affirmativo():
-    assert gen.generate("echarse", "imperativo_affirmativo", "2nd_singular") == "échate"
-    assert gen.generate("echarse", "imperativo_affirmativo", "3rd_singular") == "échese"
-    assert (
-        gen.generate("echarse", "imperativo_affirmativo", "1st_plural") == "echémonos"
-    )
-    assert gen.generate("echarse", "imperativo_affirmativo", "2nd_plural") == "echaos"
-    assert gen.generate("echarse", "imperativo_affirmativo", "3rd_plural") == "échense"
+def test_echarse_imperativo_afirmativo():
+    assert gen.generate("echarse", "imperativo_afirmativo", "2nd_singular") == "échate"
+    assert gen.generate("echarse", "imperativo_afirmativo", "3rd_singular") == "échese"
+    assert gen.generate("echarse", "imperativo_afirmativo", "1st_plural") == "echémonos"
+    assert gen.generate("echarse", "imperativo_afirmativo", "2nd_plural") == "echaos"
+    assert gen.generate("echarse", "imperativo_afirmativo", "3rd_plural") == "échense"

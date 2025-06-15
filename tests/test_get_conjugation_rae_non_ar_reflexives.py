@@ -84,11 +84,11 @@ def test_meterse():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "se metieren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "métete"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "métase"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "metámonos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "meteos"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "métanse"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "métete"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "métase"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "metámonos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "meteos"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "métanse"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no te metas"
@@ -174,11 +174,11 @@ def test_arrepentirse():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "se arrepintieren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "arrepiéntete"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "arrepiéntase"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "arrepintámonos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "arrepentíos"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "arrepiéntanse"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "arrepiéntete"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "arrepiéntase"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "arrepintámonos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "arrepentíos"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "arrepiéntanse"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no te arrepientas"
@@ -264,11 +264,11 @@ def test_irse():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "se fueren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "vete"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "váyase"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "vámonos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "idos"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "váyanse"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "vete"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "váyase"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "vámonos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "idos"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "váyanse"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no te vayas"
@@ -354,11 +354,11 @@ def test_reírse():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "se rieren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "ríete"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "ríase"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "riámonos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "reíos"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "ríanse"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "ríete"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "ríase"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "riámonos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "reíos"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "ríanse"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no te rías"

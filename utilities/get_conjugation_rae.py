@@ -255,7 +255,7 @@ class RAEConjugationTransformer:
                     if isinstance(form, str) and form.endswith(f" {p}"):
                         mapping[person] = form.replace(f" {p}", p)
                 if (
-                    key == "imperativo_affirmativo"
+                    key == "imperativo_afirmativo"
                     and person == "1st_plural"
                     and isinstance(mapping.get(person), str)
                     and mapping[person].startswith("nos ")
@@ -263,9 +263,9 @@ class RAEConjugationTransformer:
                     base_form = mapping[person][4:]
                     if self.verb.rstrip("se") == "ir":
                         base_form = "vamos"
-                    temp = {"imperativo_affirmativo": {"1st_plural": base_form}}
+                    temp = {"imperativo_afirmativo": {"1st_plural": base_form}}
                     self._add_reflexive(temp)
-                    mapping[person] = temp["imperativo_affirmativo"]["1st_plural"]
+                    mapping[person] = temp["imperativo_afirmativo"]["1st_plural"]
             if not isinstance(value, dict):
                 out[key] = mapping[""]
         if "participio" in out:
@@ -338,7 +338,7 @@ class RAEConjugationTransformer:
                 if person not in mapping:
                     continue
                 form = mapping[person]
-                if key == "imperativo_affirmativo":
+                if key == "imperativo_afirmativo":
                     mapping[person] = attach_affirmative(form, pron)
                 elif key == "imperativo_negativo":
                     if form.startswith("no "):
@@ -373,11 +373,11 @@ class RAEConjugationTransformer:
 
         imperativo = data.get("Imperativo", {})
         if "Imperativo" in imperativo:
-            out["imperativo_affirmativo"] = self._map_personal(imperativo["Imperativo"])
-            if "1st_plural" not in out["imperativo_affirmativo"]:
+            out["imperativo_afirmativo"] = self._map_personal(imperativo["Imperativo"])
+            if "1st_plural" not in out["imperativo_afirmativo"]:
                 subj = out.get("subjuntivo_presente")
                 if isinstance(subj, dict) and "1st_plural" in subj:
-                    out["imperativo_affirmativo"]["1st_plural"] = subj["1st_plural"]
+                    out["imperativo_afirmativo"]["1st_plural"] = subj["1st_plural"]
 
         subj_pres = out.get("subjuntivo_presente")
         if subj_pres:

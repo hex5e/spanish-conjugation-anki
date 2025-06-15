@@ -82,11 +82,11 @@ def test_darse():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "se dieren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "date"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "dese"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "démonos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "daos"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "dense"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "date"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "dese"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "démonos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "daos"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "dense"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no te des"
@@ -171,11 +171,11 @@ def test_liarse():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "se liaren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "líate"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "líese"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "liémonos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "liaos"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "líense"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "líate"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "líese"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "liémonos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "liaos"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "líense"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no te líes"
@@ -260,11 +260,11 @@ def test_bañarse():
     assert out["subjuntivo_futuro"]["3rd_plural"] == "se bañaren"
 
     # Imperativo afirmativo
-    assert out["imperativo_affirmativo"]["2nd_singular"] == "báñate"
-    assert out["imperativo_affirmativo"]["3rd_singular"] == "báñese"
-    assert out["imperativo_affirmativo"]["1st_plural"] == "bañémonos"
-    assert out["imperativo_affirmativo"]["2nd_plural"] == "bañaos"
-    assert out["imperativo_affirmativo"]["3rd_plural"] == "báñense"
+    assert out["imperativo_afirmativo"]["2nd_singular"] == "báñate"
+    assert out["imperativo_afirmativo"]["3rd_singular"] == "báñese"
+    assert out["imperativo_afirmativo"]["1st_plural"] == "bañémonos"
+    assert out["imperativo_afirmativo"]["2nd_plural"] == "bañaos"
+    assert out["imperativo_afirmativo"]["3rd_plural"] == "báñense"
 
     # Imperativo negativo
     assert out["imperativo_negativo"]["2nd_singular"] == "no te bañes"

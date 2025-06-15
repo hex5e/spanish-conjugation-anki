@@ -64,10 +64,12 @@ def test_written_accent_shift():
     forms = {"indicativo_presente": {"1st_singular": "envío"}}
     assert classifier.classify("enviar", forms) == "orthographically_irregular"
 
+
 def test_reflexive_imperative_levantarse():
-    forms = {"imperativo_affirmativo": {"2nd_singular": "levántate"}}
+    forms = {"imperativo_afirmativo": {"2nd_singular": "levántate"}}
     assert classifier.classify("levantarse", forms) == "regular"
 
+
 def test_reflexive_imperative_echarse():
-    forms = {"imperativo_affirmativo": {"2nd_singular": "échate"}}
+    forms = {"imperativo_afirmativo": {"2nd_singular": "échate"}}
     assert classifier.classify("echarse", forms) == "regular"

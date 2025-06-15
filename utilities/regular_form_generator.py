@@ -23,7 +23,7 @@ class RegularFormGenerator:
         8: "subjuntivo_presente",
         9: "subjuntivo_imperfecto",
         10: "subjuntivo_futuro",
-        11: "imperativo_affirmativo",
+        11: "imperativo_afirmativo",
         12: "imperativo_negativo",
     }
 
@@ -339,7 +339,7 @@ class RegularFormGenerator:
                     "3rd_plural": "ieren",
                 },
             },
-            "imperativo_affirmativo": {
+            "imperativo_afirmativo": {
                 "ar": {
                     "2nd_singular": "a",
                     "3rd_singular": "e",
@@ -419,7 +419,7 @@ class RegularFormGenerator:
                 base_conjugation = stem + conjugations[form][ending][person]
                 if is_reflexive:
                     pronoun = self.get_reflexive_pronoun(person)
-                    if form == "imperativo_affirmativo":
+                    if form == "imperativo_afirmativo":
                         original = base_conjugation
                         if person == "1st_plural" and base_conjugation.endswith("mos"):
                             base_conjugation = base_conjugation[:-1]
