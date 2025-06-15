@@ -1,3 +1,4 @@
+import re
 import pyphen
 
 ACCENTS = "áéíóú"
@@ -76,7 +77,16 @@ class RegularFormGenerator:
         return pronouns.get(person, "")
 
     def _syllables(self, word: str) -> list[str]:
-        return _dic.inserted(word).split("-")
+        syls = _dic.inserted(word).split("-")
+        result: list[str] = []
+        for syl in syls:
+            parts = re.split(
+                r"(?<=[aeiouáéíóúü])(?=[^aeiouáéíóúü]+[aeiouáéíóúü])",
+                syl,
+                flags=re.IGNORECASE,
+            )
+            result.extend([p for p in parts if p])
+        return result
 
     def _stress_index(self, word: str) -> int:
         syls = self._syllables(word)
