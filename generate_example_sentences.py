@@ -1,5 +1,6 @@
 from openai import OpenAI
 import csv
+import sqlite3
 import random
 import json
 import time
@@ -25,13 +26,15 @@ def convert_to_array(string):
 
 
 # Read all CSV files once
-print("Loading CSV files...")
+print("Loading data files...")
 
-# Read cards.csv
-with open("cards.csv", mode="r", newline="", encoding="utf-8") as csvfile:
-    reader = csv.DictReader(csvfile)
-    cards_rows = list(reader)
-    cards_fieldnames = reader.fieldnames
+# Read cards from SQLite database
+conn = sqlite3.connect("cards.db")
+conn.row_factory = sqlite3.Row
+with conn:
+    cursor = conn.execute("SELECT * FROM cards")
+    cards_rows = [dict(row) for row in cursor]
+    cards_fieldnames = [desc[0] for desc in cursor.description]
 
 # Read verbs.csv and create a lookup dictionary
 with open("verb_data/verbs.csv", mode="r", newline="", encoding="utf-8") as csvfile:
@@ -47,11 +50,7 @@ with open("verb_data/tenses.csv", mode="r", newline="", encoding="utf-8") as csv
 client = OpenAI()
 
 # Count rows that need processing
-rows_to_process = sum(
-    1
-    for card in cards_rows
-    if not card.get("example_sentence")
-)
+rows_to_process = sum(1 for card in cards_rows if not card.get("example_sentence"))
 print(f"Found {rows_to_process} rows that need processing with {MODEL}")
 
 # Process each row
@@ -261,26 +260,36 @@ Checks
     # Save periodically to avoid losing progress
     if processed_count % PERIODIC_SAVE_NUMBER == 0:
         print(f"\nSaving progress after processing {processed_count} unfilled rows...")
-        with open("cards.csv", mode="w", newline="", encoding="utf-8") as csvfile:
-            writer = csv.DictWriter(
-                csvfile, fieldnames=cards_fieldnames, quoting=csv.QUOTE_MINIMAL
-            )
-            writer.writeheader()
-            writer.writerows(cards_rows)
+        with sqlite3.connect("cards.db") as save_conn:
+            for row in cards_rows:
+                save_conn.execute(
+                    "UPDATE cards SET example_sentence=?, attempts_count=?, failure_counts=? WHERE conjugation_id=?",
+                    (
+                        row.get("example_sentence"),
+                        row.get("attempts_count"),
+                        row.get("failure_counts"),
+                        row["conjugation_id"],
+                    ),
+                )
+            save_conn.commit()
 
 # Final save
-print(f"\nSaving all {total_rows} rows to cards.csv...")
-with open("cards.csv", mode="w", newline="", encoding="utf-8") as csvfile:
-    writer = csv.DictWriter(
-        csvfile, fieldnames=cards_fieldnames, quoting=csv.QUOTE_MINIMAL
-    )
-    writer.writeheader()
-    writer.writerows(cards_rows)
+print(f"\nSaving all {total_rows} rows to cards.db...")
+with sqlite3.connect("cards.db") as save_conn:
+    for row in cards_rows:
+        save_conn.execute(
+            "UPDATE cards SET example_sentence=?, attempts_count=?, failure_counts=? WHERE conjugation_id=?",
+            (
+                row.get("example_sentence"),
+                row.get("attempts_count"),
+                row.get("failure_counts"),
+                row["conjugation_id"],
+            ),
+        )
+    save_conn.commit()
 
 # Print summary statistics
-successful_rows = sum(
-    1 for row in cards_rows if row.get("example_sentence")
-)
+successful_rows = sum(1 for row in cards_rows if row.get("example_sentence"))
 failed_rows = sum(
     1
     for row in cards_rows

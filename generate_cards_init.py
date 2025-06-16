@@ -1,4 +1,5 @@
 import csv
+import sqlite3
 from pathlib import Path
 
 from utilities.regular_form_generator import RegularFormGenerator
@@ -166,13 +167,54 @@ def generate_conjugation_table():
                 )
                 conjugation_table.append(row)
 
-    # Write to CSV file
-    output_filename = "cards.csv"
+    # Write to SQLite database
+    output_filename = "cards.db"
 
-    with open(output_filename, "w", newline="", encoding="utf-8") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=FIELDNAMES)
-        writer.writeheader()
-        writer.writerows(conjugation_table)
+    conn = sqlite3.connect(output_filename)
+    cur = conn.cursor()
+    cur.execute("DROP TABLE IF EXISTS cards")
+    cur.execute(
+        """
+        CREATE TABLE cards (
+            verb_id INTEGER,
+            verb TEXT,
+            form_id INTEGER,
+            form TEXT,
+            person_id INTEGER,
+            person TEXT,
+            conjugation_id TEXT PRIMARY KEY,
+            hypothetical_regular_conjugation TEXT,
+            conjugation TEXT,
+            regularity_class TEXT,
+            example_sentence TEXT,
+            attempts_count INTEGER,
+            failure_counts TEXT
+        )
+        """
+    )
+    cur.executemany(
+        "INSERT INTO cards VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        [
+            (
+                row["verb_id"],
+                row["verb"],
+                row["form_id"],
+                row["form"],
+                row["person_id"],
+                row["person"],
+                row["conjugation_id"],
+                row["hypothetical_regular_conjugation"],
+                row["conjugation"],
+                row["regularity_class"],
+                row["example_sentence"],
+                row["attempts_count"],
+                row["failure_counts"],
+            )
+            for row in conjugation_table
+        ],
+    )
+    conn.commit()
+    conn.close()
 
     # Calculate statistics
     reflexive_count = sum(1 for _, verb in verbs if verb.endswith("se"))
