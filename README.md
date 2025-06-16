@@ -39,6 +39,7 @@ produce audio using ElevenLabs.
   forms used to flag irregular conjugations.
 - `csv_to_sqlite.py` loads `cards.csv` into a SQLite database
   `cards.db`.
+- `table_summary.py` prints basic counts from `cards.db`.
 
 ## `cards.csv` fields
 
