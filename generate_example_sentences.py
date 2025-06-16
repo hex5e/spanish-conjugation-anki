@@ -10,7 +10,7 @@ MODEL = "gpt-4.1"  # Use "o3-mini" for faster processing
 # REASONING_EFFORT = "medium"  # only used for reasoning models like o3-mini; Can be "low", "medium", or "high"
 MAX_COMPLETION_TOKENS = 2048
 # SEED = 42
-FULL_AUTO_MODE = False  # Set to False to require pressing Enter after each conjugation
+FULL_AUTO_MODE = True  # Set to False to require pressing Enter after each conjugation
 PERIODIC_SAVE_NUMBER = 1  # Save progress every N processed rows
 
 
@@ -50,10 +50,7 @@ client = OpenAI()
 rows_to_process = sum(
     1
     for card in cards_rows
-    if not (
-        card.get("conjugation_with_verification")
-        and card.get("sentence_with_verification")
-    )
+    if not card.get("example_sentence")
 )
 print(f"Found {rows_to_process} rows that need processing with {MODEL}")
 
@@ -68,9 +65,7 @@ for i, card in enumerate(cards_rows):
     conjugation = card["conjugation"]
 
     # Skip if already has verified content
-    if card.get("conjugation_with_verification") and card.get(
-        "sentence_with_verification"
-    ):
+    if card.get("example_sentence"):
         continue
 
     processed_count += 1
@@ -138,8 +133,8 @@ You are given:
 - conjugation: "{conjugation}"
 - recommended collocations: {selected_collocations}
 - form: "{form}"
+- form trigger: [{selected_trigger}]
 - person: "{person}"
-- form trigger phrases: [{selected_trigger}]
 
 
 TASK
@@ -190,7 +185,7 @@ You are given
 - verb: "{verb}"
 - form: "{form}"
 - person: "{person}"
-- form_trigger_phrase: "{selected_trigger}"
+- form_trigger: "{selected_trigger}"
 - conjugation: "{conjugation}"
 - example_sentence: "{example_sentence}"
 
@@ -199,7 +194,7 @@ Return **only** a JSON object with two Boolean keys that independently signal wh
 
 Checks
 1. "grammar_ok" - **example_sentence** is grammatically correct Spanish.
-2. "trigger_in_sentence" - **example_sentence** contains **form_trigger_phrase** (case-insensitive match is acceptable).
+2. "trigger_in_sentence" - **example_sentence** contains **form_trigger** (case-insensitive match is acceptable).
 
 **Output format**
 {{
@@ -237,8 +232,7 @@ Checks
 
             if all_passed:
                 # Success! Update the row
-                cards_rows[i]["conjugation_with_verification"] = conjugation
-                cards_rows[i]["sentence_with_verification"] = example_sentence
+                cards_rows[i]["example_sentence"] = example_sentence
                 cards_rows[i]["attempts_count"] = str(attempts)
                 cards_rows[i]["failure_counts"] = json.dumps(failure_counts)
                 print(f"    ✓ All checks passed!")
@@ -285,12 +279,12 @@ with open("cards.csv", mode="w", newline="", encoding="utf-8") as csvfile:
 
 # Print summary statistics
 successful_rows = sum(
-    1 for row in cards_rows if row.get("conjugation_with_verification")
+    1 for row in cards_rows if row.get("example_sentence")
 )
 failed_rows = sum(
     1
     for row in cards_rows
-    if row.get("attempts_count") and not row.get("conjugation_with_verification")
+    if row.get("attempts_count") and not row.get("example_sentence")
 )
 
 print("\n" + "=" * 50)
