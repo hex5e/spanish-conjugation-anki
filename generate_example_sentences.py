@@ -47,7 +47,11 @@ with open("verb_data/tenses.csv", mode="r", newline="", encoding="utf-8") as csv
 client = OpenAI()
 
 # Count rows that need processing
-rows_to_process = sum(1 for card in cards_rows if not card.get("example_sentence"))
+rows_to_process = sum(
+    1
+    for card in cards_rows
+    if not card.get("example_sentence")
+)
 print(f"Found {rows_to_process} rows that need processing with {MODEL}")
 
 # Process each row
@@ -274,7 +278,9 @@ with open("cards.csv", mode="w", newline="", encoding="utf-8") as csvfile:
     writer.writerows(cards_rows)
 
 # Print summary statistics
-successful_rows = sum(1 for row in cards_rows if row.get("example_sentence"))
+successful_rows = sum(
+    1 for row in cards_rows if row.get("example_sentence")
+)
 failed_rows = sum(
     1
     for row in cards_rows
