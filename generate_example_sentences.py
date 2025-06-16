@@ -12,7 +12,7 @@ MODEL = "gpt-4.1"  # Use "o3-mini" for faster processing
 MAX_COMPLETION_TOKENS = 2048
 # SEED = 42
 FULL_AUTO_MODE = True  # Set to False to require pressing Enter after each conjugation
-PERIODIC_SAVE_NUMBER = 1  # Save progress every N processed rows
+PERIODIC_SAVE_NUMBER = 5  # Save progress every N processed rows
 
 
 def convert_to_array(string):
