@@ -1,4 +1,5 @@
 from openai import OpenAI
+import argparse
 import csv
 import random
 import json
@@ -12,6 +13,25 @@ MAX_COMPLETION_TOKENS = 2048
 # SEED = 42
 FULL_AUTO_MODE = True  # Set to False to require pressing Enter after each conjugation
 PERIODIC_SAVE_NUMBER = 1  # Save progress every N processed rows
+
+
+parser = argparse.ArgumentParser(description="Generate example sentences")
+parser.add_argument(
+    "--start-row",
+    type=int,
+    default=1,
+    help="1-indexed start row to process (inclusive)",
+)
+parser.add_argument(
+    "--end-row",
+    type=int,
+    default=None,
+    help="1-indexed end row to process (inclusive)",
+)
+args = parser.parse_args()
+
+start_index = max(0, args.start_row - 1)
+end_index = args.end_row - 1 if args.end_row is not None else None
 
 
 def convert_to_array(string):
@@ -46,19 +66,25 @@ with open("verb_data/tenses.csv", mode="r", newline="", encoding="utf-8") as csv
 # Initialize OpenAI client once
 client = OpenAI()
 
-# Count rows that need processing
+# Count rows that need processing within the selected range
 rows_to_process = sum(
     1
-    for card in cards_rows
-    if not card.get("example_sentence")
+    for idx, card in enumerate(cards_rows)
+    if idx >= start_index
+    and (end_index is None or idx <= end_index)
+    and not card.get("example_sentence")
 )
-print(f"Found {rows_to_process} rows that need processing with {MODEL}")
+print(
+    f"Found {rows_to_process} rows that need processing with {MODEL} in the specified range"
+)
 
 # Process each row
 total_rows = len(cards_rows)
 processed_count = 0
 
 for i, card in enumerate(cards_rows):
+    if i < start_index or (end_index is not None and i > end_index):
+        continue
     verb = card["verb"]
     form = card["form"]
     person = card["person"]
@@ -278,9 +304,7 @@ with open("cards.csv", mode="w", newline="", encoding="utf-8") as csvfile:
     writer.writerows(cards_rows)
 
 # Print summary statistics
-successful_rows = sum(
-    1 for row in cards_rows if row.get("example_sentence")
-)
+successful_rows = sum(1 for row in cards_rows if row.get("example_sentence"))
 failed_rows = sum(
     1
     for row in cards_rows
