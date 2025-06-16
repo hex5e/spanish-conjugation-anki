@@ -37,6 +37,8 @@ produce audio using ElevenLabs.
   pronoun before fetching.
 - `utilities/regular_form_generator.py` provides hypothetical regular
   forms used to flag irregular conjugations.
+- `csv_to_sqlite.py` loads `cards.csv` into a SQLite database
+  `cards.db`.
 
 ## `cards.csv` fields
 
