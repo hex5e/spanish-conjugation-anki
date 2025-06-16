@@ -37,7 +37,7 @@ produce audio using ElevenLabs.
   pronoun before fetching.
 - `utilities/regular_form_generator.py` provides hypothetical regular
   forms used to flag irregular conjugations.
-- `table_summary.py` prints basic counts from `cards.db`.
+- `table_summary.py` prints summary statistics and shows 10 random rows from `cards.db`.
 
 ## `cards.csv` fields
 

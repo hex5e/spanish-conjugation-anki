@@ -25,6 +25,16 @@ def main() -> None:
             f"SELECT COUNT(*) FROM {TABLE_NAME} WHERE example_sentence IS NOT NULL AND example_sentence != ''"
         ).fetchone()[0]
 
+        sample_rows = cur.execute(
+            f"""
+            SELECT rowid, verb, form, person, conjugation, example_sentence
+            FROM {TABLE_NAME}
+            ORDER BY RANDOM()
+            LIMIT 10
+            """
+        ).fetchall()
+        sample_rows.sort(key=lambda r: r[0])
+
     print(f"Total rows: {row_count}")
     print(f"Unique verbs: {verb_count}")
     print(f"Unique forms: {form_count}")
@@ -34,6 +44,12 @@ def main() -> None:
         label = cls if cls is not None else "NULL"
         print(f"  {label}: {cnt}")
     print(f"Rows with example_sentence: {filled_examples}")
+
+    print("\nSample rows:")
+    for rid, verb, form, person, conjugation, example_sentence in sample_rows:
+        print(
+            f"{rid} | {verb} | {form} | {person} | {conjugation} | {example_sentence}"
+        )
 
 
 if __name__ == "__main__":
