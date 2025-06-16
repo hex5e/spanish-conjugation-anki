@@ -21,6 +21,9 @@ def main() -> None:
         class_counts = cur.execute(
             f"SELECT regularity_class, COUNT(*) FROM {TABLE_NAME} GROUP BY regularity_class"
         ).fetchall()
+        filled_examples = cur.execute(
+            f"SELECT COUNT(*) FROM {TABLE_NAME} WHERE example_sentence IS NOT NULL AND example_sentence != ''"
+        ).fetchone()[0]
 
     print(f"Total rows: {row_count}")
     print(f"Unique verbs: {verb_count}")
@@ -30,6 +33,7 @@ def main() -> None:
     for cls, cnt in class_counts:
         label = cls if cls is not None else "NULL"
         print(f"  {label}: {cnt}")
+    print(f"Rows with example_sentence: {filled_examples}")
 
 
 if __name__ == "__main__":
