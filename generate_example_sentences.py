@@ -1,4 +1,5 @@
 from openai import OpenAI
+import argparse
 import csv
 import sqlite3
 import random
@@ -13,6 +14,20 @@ MAX_COMPLETION_TOKENS = 2048
 # SEED = 42
 FULL_AUTO_MODE = True  # Set to False to require pressing Enter after each conjugation
 PERIODIC_SAVE_NUMBER = 5  # Save progress every N processed rows
+
+parser = argparse.ArgumentParser(description="Generate example sentences")
+parser.add_argument(
+    "--start",
+    type=int,
+    default=1,
+    help="1-indexed start row (inclusive)",
+)
+parser.add_argument(
+    "--end",
+    type=int,
+    help="1-indexed end row (inclusive; defaults to all rows)",
+)
+cli_args = parser.parse_args()
 
 
 def convert_to_array(string):
@@ -36,6 +51,12 @@ with conn:
     cards_rows = [dict(row) for row in cursor]
     cards_fieldnames = [desc[0] for desc in cursor.description]
 
+# Determine slice of rows to process
+total_rows = len(cards_rows)
+start_index = max(cli_args.start - 1, 0)
+end_index = cli_args.end if cli_args.end is not None else total_rows
+end_index = min(end_index, total_rows)
+
 # Read verbs.csv and create a lookup dictionary
 with open("verb_data/verbs.csv", mode="r", newline="", encoding="utf-8") as csvfile:
     reader = csv.DictReader(csvfile)
@@ -50,14 +71,19 @@ with open("verb_data/tenses.csv", mode="r", newline="", encoding="utf-8") as csv
 client = OpenAI()
 
 # Count rows that need processing
-rows_to_process = sum(1 for card in cards_rows if not card.get("example_sentence"))
-print(f"Found {rows_to_process} rows that need processing with {MODEL}")
+rows_to_process = sum(
+    1 for card in cards_rows[start_index:end_index] if not card.get("example_sentence")
+)
+selected_total = end_index - start_index
+print(
+    f"Found {rows_to_process} rows that need processing in {selected_total} selected rows with {MODEL}"
+)
 
 # Process each row
-total_rows = len(cards_rows)
 processed_count = 0
 
-for i, card in enumerate(cards_rows):
+for i in range(start_index, end_index):
+    card = cards_rows[i]
     verb = card["verb"]
     form = card["form"]
     person = card["person"]
