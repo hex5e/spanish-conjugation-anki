@@ -1,11 +1,11 @@
 import asyncio
-from openai import AsyncOpenAI
+import re
+from openai import AsyncOpenAI, RateLimitError
 import argparse
 import csv
 import sqlite3
 import random
 import json
-import re
 
 # Configuration
 MODEL = "gpt-4.1"  # Use "o3-mini" for faster processing
@@ -43,6 +43,29 @@ def convert_to_array(string):
     items = string.strip("[]").split(";")
     array = [item.strip() for item in items]
     return array
+
+
+def parse_retry_after(message: str) -> float | None:
+    """Extract retry wait time from an error message in seconds."""
+    match = re.search(r"Please try again in (\d+)(ms|s)", message)
+    if match:
+        value = int(match.group(1))
+        return value / 1000 if match.group(2) == "ms" else float(value)
+    return None
+
+
+async def openai_chat_with_retry(**kwargs):
+    """Call OpenAI chat endpoint and retry when rate limited."""
+    backoff = 1.0
+    while True:
+        try:
+            async with sem:
+                return await client.chat.completions.create(**kwargs)
+        except RateLimitError as e:
+            wait = parse_retry_after(str(e)) or backoff
+            backoff = min(backoff * 2, 60)
+            print(f"    Rate limit exceeded. Sleeping {wait} seconds...")
+            await asyncio.sleep(wait)
 
 
 # Read all CSV files once
@@ -164,20 +187,19 @@ Example output
 """
 
         try:
-            async with sem:
-                response = await client.chat.completions.create(
-                    model=MODEL,
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": "You are a Spanish-grammar assistant. "
-                            "Follow the TASK strictly and output valid JSON only.",
-                        },
-                        {"role": "user", "content": generation_prompt},
-                    ],
-                    response_format={"type": "json_object"},
-                    max_completion_tokens=MAX_COMPLETION_TOKENS,
-                )
+            response = await openai_chat_with_retry(
+                model=MODEL,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a Spanish-grammar assistant. "
+                        "Follow the TASK strictly and output valid JSON only.",
+                    },
+                    {"role": "user", "content": generation_prompt},
+                ],
+                response_format={"type": "json_object"},
+                max_completion_tokens=MAX_COMPLETION_TOKENS,
+            )
 
             generation_response = json.loads(response.choices[0].message.content)
             example_sentence = generation_response["example_sentence"]
@@ -217,20 +239,19 @@ Checks
 
             await asyncio.sleep(2)
 
-            async with sem:
-                verification_response = await client.chat.completions.create(
-                    model=MODEL,
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": "You are a Spanish-grammar verification assistant. "
-                            "Carefully check each requirement and output valid JSON only.",
-                        },
-                        {"role": "user", "content": verification_prompt},
-                    ],
-                    response_format={"type": "json_object"},
-                    max_completion_tokens=MAX_COMPLETION_TOKENS,
-                )
+            verification_response = await openai_chat_with_retry(
+                model=MODEL,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a Spanish-grammar verification assistant. "
+                        "Carefully check each requirement and output valid JSON only.",
+                    },
+                    {"role": "user", "content": verification_prompt},
+                ],
+                response_format={"type": "json_object"},
+                max_completion_tokens=MAX_COMPLETION_TOKENS,
+            )
 
             verification_result = json.loads(
                 verification_response.choices[0].message.content
