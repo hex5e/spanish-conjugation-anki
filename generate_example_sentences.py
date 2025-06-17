@@ -294,7 +294,7 @@ async def main():
     ]
     await asyncio.gather(*tasks)
 
-    print(f"\nSaving all {total_rows} rows to cards.db...")
+    print(f"\nSaving rows to cards.db...")
     with sqlite3.connect("cards.db") as save_conn:
         for row in cards_rows:
             save_conn.execute(
