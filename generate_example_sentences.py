@@ -1,10 +1,10 @@
-from openai import OpenAI
+import asyncio
+from openai import AsyncOpenAI
 import argparse
 import csv
 import sqlite3
 import random
 import json
-import time
 import re
 
 # Configuration
@@ -13,7 +13,6 @@ MODEL = "gpt-4.1"  # Use "o3-mini" for faster processing
 MAX_COMPLETION_TOKENS = 2048
 # SEED = 42
 FULL_AUTO_MODE = True  # Set to False to require pressing Enter after each conjugation
-PERIODIC_SAVE_NUMBER = 5  # Save progress every N processed rows
 
 parser = argparse.ArgumentParser(description="Generate example sentences")
 parser.add_argument(
@@ -26,6 +25,12 @@ parser.add_argument(
     "--end",
     type=int,
     help="1-indexed end row (inclusive; defaults to all rows)",
+)
+parser.add_argument(
+    "--workers",
+    type=int,
+    default=5,
+    help="Number of concurrent OpenAI requests",
 )
 cli_args = parser.parse_args()
 
@@ -68,7 +73,9 @@ with open("verb_data/tenses.csv", mode="r", newline="", encoding="utf-8") as csv
     forms_dict = {row["form"]: row.get("form_trigger_phrases", "") for row in reader}
 
 # Initialize OpenAI client once
-client = OpenAI()
+client = AsyncOpenAI()
+CONCURRENCY = cli_args.workers
+sem = asyncio.Semaphore(CONCURRENCY)
 
 # Count rows that need processing
 rows_to_process = sum(
@@ -79,52 +86,40 @@ print(
     f"Found {rows_to_process} rows that need processing in {selected_total} selected rows with {MODEL}"
 )
 
-# Process each row
-processed_count = 0
 
-for i in range(start_index, end_index):
-    card = cards_rows[i]
+async def process_card(card):
+    if card.get("example_sentence"):
+        return
+
     verb = card["verb"]
     form = card["form"]
     person = card["person"]
     conjugation = card["conjugation"]
 
-    # Skip if already has verified content
-    if card.get("example_sentence"):
-        continue
-
-    processed_count += 1
-    print(
-        f"\nProcessing row {i+1}/{total_rows} (unfilled row {processed_count}/{rows_to_process}):"
-    )
+    print(f"\nProcessing row {card['conjugation_id']}/{total_rows}...")
     print(f"  verb: {verb}")
     print(f"  form: {form}")
     print(f"  person: {person}")
     print(f"  conjugation: {conjugation}")
 
-    # Get verb collocations
     verb_collocations = []
     if verb in verbs_dict and verbs_dict[verb]:
         verb_collocations = convert_to_array(verbs_dict[verb])
 
-    # Get form trigger phrases
     form_trigger_phrases = []
     if form in forms_dict and forms_dict[form]:
         form_trigger_phrases = convert_to_array(forms_dict[form])
 
-    # Skip if missing required data
     if not verb_collocations or not form_trigger_phrases:
-        print(f"  Skipping - missing collocations or trigger phrases")
-        continue
+        print("  Skipping - missing collocations or trigger phrases")
+        return
 
-    # Prepare specifications
     imperativo_specification = (
         "Use exclamation marks; "
         if "imperativo" in form
         else "The sentence should NOT be a command; Do NOT use exclamation marks; "
     )
 
-    # Initialize or update failure tracking
     if card.get("failure_counts"):
         failure_counts = json.loads(card["failure_counts"])
         failure_counts.pop("correct_conjugation", None)
@@ -135,22 +130,18 @@ for i in range(start_index, end_index):
             "trigger_in_sentence": 0,
         }
 
-    # Get existing attempt count or start fresh
     attempts = int(card.get("attempts_count", 0)) if card.get("attempts_count") else 0
-    max_total_attempts = attempts + 3  # Allow 3 more attempts with o3
+    max_total_attempts = attempts + 3
     success = False
 
     while attempts < max_total_attempts and not success:
         attempts += 1
         print(f"  Attempt {attempts} with {MODEL}...")
 
-        # Sample collocations and trigger phrases
         selected_collocations = random.sample(
             verb_collocations, min(3, len(verb_collocations))
         )
-        selected_trigger = random.sample(form_trigger_phrases, 1)[
-            0
-        ]  # Get the string, not list
+        selected_trigger = random.sample(form_trigger_phrases, 1)[0]
 
         generation_prompt = f"""
 You are given:
@@ -173,38 +164,34 @@ Example output
 """
 
         try:
-            # Generate conjugation and sentence with o3
-            response = client.chat.completions.create(
-                model=MODEL,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a Spanish-grammar assistant. "
-                        "Follow the TASK strictly and output valid JSON only.",
-                    },
-                    {"role": "user", "content": generation_prompt},
-                ],
-                response_format={"type": "json_object"},
-                max_completion_tokens=MAX_COMPLETION_TOKENS,
-                # reasoning_effort=REASONING_EFFORT,
-                # seed=SEED
-            )
+            async with sem:
+                response = await client.chat.completions.create(
+                    model=MODEL,
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "You are a Spanish-grammar assistant. "
+                            "Follow the TASK strictly and output valid JSON only.",
+                        },
+                        {"role": "user", "content": generation_prompt},
+                    ],
+                    response_format={"type": "json_object"},
+                    max_completion_tokens=MAX_COMPLETION_TOKENS,
+                )
 
             generation_response = json.loads(response.choices[0].message.content)
             example_sentence = generation_response["example_sentence"]
 
             print(f"    Generated sentence: {example_sentence}...")
 
-            # Check if the conjugation appears in the sentence (case-insensitive)
             conjugation_regex = re.compile(
                 rf"\b{re.escape(conjugation)}\b", re.IGNORECASE
             )
             conjugation_in_sentence = bool(conjugation_regex.search(example_sentence))
             if not conjugation_in_sentence:
                 failure_counts["conjugation_in_sentence"] += 1
-                print("    \u2717 Failed: conjugation_in_sentence")
+                print("    ✗ Failed: conjugation_in_sentence")
 
-            # Verify the generation
             verification_prompt = f"""
 You are given
 - verb: "{verb}"
@@ -228,42 +215,36 @@ Checks
 }}
 """
 
-            # Small delay to avoid rate limits
-            time.sleep(2)
+            await asyncio.sleep(2)
 
-            # Verify with o3
-            verification_response = client.chat.completions.create(
-                model=MODEL,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a Spanish-grammar verification assistant. "
-                        "Carefully check each requirement and output valid JSON only.",
-                    },
-                    {"role": "user", "content": verification_prompt},
-                ],
-                response_format={"type": "json_object"},
-                max_completion_tokens=MAX_COMPLETION_TOKENS,
-                # reasoning_effort=REASONING_EFFORT,
-                # seed=SEED
-            )
+            async with sem:
+                verification_response = await client.chat.completions.create(
+                    model=MODEL,
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "You are a Spanish-grammar verification assistant. "
+                            "Carefully check each requirement and output valid JSON only.",
+                        },
+                        {"role": "user", "content": verification_prompt},
+                    ],
+                    response_format={"type": "json_object"},
+                    max_completion_tokens=MAX_COMPLETION_TOKENS,
+                )
 
             verification_result = json.loads(
                 verification_response.choices[0].message.content
             )
 
-            # Check if all verifications passed
             all_passed = conjugation_in_sentence and all(verification_result.values())
 
             if all_passed:
-                # Success! Update the row
-                cards_rows[i]["example_sentence"] = example_sentence
-                cards_rows[i]["attempts_count"] = str(attempts)
-                cards_rows[i]["failure_counts"] = json.dumps(failure_counts)
-                print(f"    ✓ All checks passed!")
+                card["example_sentence"] = example_sentence
+                card["attempts_count"] = str(attempts)
+                card["failure_counts"] = json.dumps(failure_counts)
+                print("    ✓ All checks passed!")
                 success = True
             else:
-                # Track failures
                 for check, passed in verification_result.items():
                     if not passed:
                         failure_counts[check] += 1
@@ -273,79 +254,73 @@ Checks
             print(f"    ✗ Error: {str(e)}")
             continue
 
-    # If we exhausted attempts without success
     if not success:
-        cards_rows[i]["attempts_count"] = str(attempts)
-        cards_rows[i]["failure_counts"] = json.dumps(failure_counts)
+        card["attempts_count"] = str(attempts)
+        card["failure_counts"] = json.dumps(failure_counts)
         print(f"  Failed after {attempts} attempts. Failures: {failure_counts}")
 
-    # Interactive mode - wait for user to press Enter
     if not FULL_AUTO_MODE:
-        input("\nPress Enter to continue to the next conjugation...")
-
-    # Save periodically to avoid losing progress
-    if processed_count % PERIODIC_SAVE_NUMBER == 0:
-        print(f"\nSaving progress after processing {processed_count} unfilled rows...")
-        with sqlite3.connect("cards.db") as save_conn:
-            for row in cards_rows:
-                save_conn.execute(
-                    "UPDATE cards SET example_sentence=?, attempts_count=?, failure_counts=? WHERE conjugation_id=?",
-                    (
-                        row.get("example_sentence"),
-                        row.get("attempts_count"),
-                        row.get("failure_counts"),
-                        row["conjugation_id"],
-                    ),
-                )
-            save_conn.commit()
-
-# Final save
-print(f"\nSaving all {total_rows} rows to cards.db...")
-with sqlite3.connect("cards.db") as save_conn:
-    for row in cards_rows:
-        save_conn.execute(
-            "UPDATE cards SET example_sentence=?, attempts_count=?, failure_counts=? WHERE conjugation_id=?",
-            (
-                row.get("example_sentence"),
-                row.get("attempts_count"),
-                row.get("failure_counts"),
-                row["conjugation_id"],
-            ),
+        await asyncio.to_thread(
+            input, "\nPress Enter to continue to the next conjugation..."
         )
-    save_conn.commit()
 
-# Print summary statistics
-successful_rows = sum(1 for row in cards_rows if row.get("example_sentence"))
-failed_rows = sum(
-    1
-    for row in cards_rows
-    if row.get("attempts_count") and not row.get("example_sentence")
-)
 
-print("\n" + "=" * 50)
-print("SUMMARY:")
-print(f"Total rows in file: {total_rows}")
-print(f"Rows processed this run: {processed_count}")
-print(f"Total successful verifications: {successful_rows}")
-print(f"Still failed after max attempts: {failed_rows}")
+async def main():
+    tasks = [
+        process_card(card)
+        for card in cards_rows[start_index:end_index]
+        if not card.get("example_sentence")
+    ]
+    await asyncio.gather(*tasks)
 
-# Analyze failure patterns
-if failed_rows > 0:
-    print("\nFailure analysis (all attempts including previous runs):")
-    total_failures = {
-        "conjugation_in_sentence": 0,
-        "grammar_ok": 0,
-        "trigger_in_sentence": 0,
-    }
+    print(f"\nSaving all {total_rows} rows to cards.db...")
+    with sqlite3.connect("cards.db") as save_conn:
+        for row in cards_rows:
+            save_conn.execute(
+                "UPDATE cards SET example_sentence=?, attempts_count=?, failure_counts=? WHERE conjugation_id=?",
+                (
+                    row.get("example_sentence"),
+                    row.get("attempts_count"),
+                    row.get("failure_counts"),
+                    row["conjugation_id"],
+                ),
+            )
+        save_conn.commit()
 
-    for row in cards_rows:
-        if row.get("failure_counts"):
-            failures = json.loads(row["failure_counts"])
-            for check, count in failures.items():
-                total_failures[check] += count
+    successful_rows = sum(1 for row in cards_rows if row.get("example_sentence"))
+    failed_rows = sum(
+        1
+        for row in cards_rows
+        if row.get("attempts_count") and not row.get("example_sentence")
+    )
 
-    print("Total failures by check type:")
-    for check, count in total_failures.items():
-        print(f"  {check}: {count}")
+    print("\n" + "=" * 50)
+    print("SUMMARY:")
+    print(f"Total rows in file: {total_rows}")
+    print(f"Rows processed this run: {rows_to_process}")
+    print(f"Total successful verifications: {successful_rows}")
+    print(f"Still failed after max attempts: {failed_rows}")
 
-print(f"\nDone!")
+    if failed_rows > 0:
+        print("\nFailure analysis (all attempts including previous runs):")
+        total_failures = {
+            "conjugation_in_sentence": 0,
+            "grammar_ok": 0,
+            "trigger_in_sentence": 0,
+        }
+
+        for row in cards_rows:
+            if row.get("failure_counts"):
+                failures = json.loads(row["failure_counts"])
+                for check, count in failures.items():
+                    total_failures[check] += count
+
+        print("Total failures by check type:")
+        for check, count in total_failures.items():
+            print(f"  {check}: {count}")
+
+    print("\nDone!")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

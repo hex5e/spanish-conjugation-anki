@@ -28,8 +28,9 @@ produce audio using ElevenLabs.
 - `generate_cards_init.py` builds the initial `cards.db` combining every
   verb, form and person.
 - `generate_example_sentences.py` adds verified conjugations and example
-  sentences using the OpenAI API.  Optional `--start` and `--end`
-  arguments limit processing to specific row ranges.
+  sentences using the OpenAI API. The script now runs asynchronously and
+  limits concurrent API calls with `--workers` (default `5`). Optional
+  `--start` and `--end` arguments restrict processing to a row range.
 - `generate_audio.py` creates audio files for the sentences with
   ElevenLabs.
 - `utilities/get_conjugation_rae.py` scrapes conjugations from the RAE
