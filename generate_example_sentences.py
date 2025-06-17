@@ -72,12 +72,11 @@ async def openai_chat_with_retry(**kwargs):
 print("Loading data files...")
 
 # Read cards from SQLite database
-conn = sqlite3.connect("cards.db")
-conn.row_factory = sqlite3.Row
-with conn:
-    cursor = conn.execute("SELECT * FROM cards")
-    cards_rows = [dict(row) for row in cursor]
-    cards_fieldnames = [desc[0] for desc in cursor.description]
+db_conn = sqlite3.connect("cards.db", check_same_thread=False)
+db_conn.row_factory = sqlite3.Row
+cursor = db_conn.execute("SELECT * FROM cards")
+cards_rows = [dict(row) for row in cursor]
+cards_fieldnames = [desc[0] for desc in cursor.description]
 
 # Determine slice of rows to process
 total_rows = len(cards_rows)
@@ -99,6 +98,22 @@ with open("verb_data/tenses.csv", mode="r", newline="", encoding="utf-8") as csv
 client = AsyncOpenAI()
 CONCURRENCY = cli_args.workers
 sem = asyncio.Semaphore(CONCURRENCY)
+db_lock = asyncio.Lock()
+
+
+async def save_row(row):
+    async with db_lock:
+        db_conn.execute(
+            "UPDATE cards SET example_sentence=?, attempts_count=?, failure_counts=? WHERE conjugation_id=?",
+            (
+                row.get("example_sentence"),
+                row.get("attempts_count"),
+                row.get("failure_counts"),
+                row["conjugation_id"],
+            ),
+        )
+        db_conn.commit()
+
 
 # Count rows that need processing
 rows_to_process = sum(
@@ -273,11 +288,13 @@ Checks
 
         except Exception as e:
             print(f"    ✗ Error: {str(e)}")
+        card["attempts_count"] = str(attempts)
+        card["failure_counts"] = json.dumps(failure_counts)
+        await save_row(card)
+        if not success:
             continue
 
     if not success:
-        card["attempts_count"] = str(attempts)
-        card["failure_counts"] = json.dumps(failure_counts)
         print(f"  Failed after {attempts} attempts. Failures: {failure_counts}")
 
     if not FULL_AUTO_MODE:
@@ -295,18 +312,7 @@ async def main():
     await asyncio.gather(*tasks)
 
     print(f"\nSaving rows to cards.db...")
-    with sqlite3.connect("cards.db") as save_conn:
-        for row in cards_rows:
-            save_conn.execute(
-                "UPDATE cards SET example_sentence=?, attempts_count=?, failure_counts=? WHERE conjugation_id=?",
-                (
-                    row.get("example_sentence"),
-                    row.get("attempts_count"),
-                    row.get("failure_counts"),
-                    row["conjugation_id"],
-                ),
-            )
-        save_conn.commit()
+    db_conn.commit()
 
     successful_rows = sum(1 for row in cards_rows if row.get("example_sentence"))
     failed_rows = sum(
@@ -341,6 +347,7 @@ async def main():
             print(f"  {check}: {count}")
 
     print("\nDone!")
+    db_conn.close()
 
 
 if __name__ == "__main__":
