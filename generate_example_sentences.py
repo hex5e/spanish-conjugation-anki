@@ -34,6 +34,15 @@ parser.add_argument(
 )
 cli_args = parser.parse_args()
 
+# Global logging utilities
+print_lock = asyncio.Lock()
+
+
+async def log(card_id: int | str, text: str) -> None:
+    """Write a log message prefixed with the card identifier."""
+    async with print_lock:
+        print(f"[{card_id}] {text}", flush=True)
+
 
 def convert_to_array(string):
     """
@@ -54,7 +63,7 @@ def parse_retry_after(message: str) -> float | None:
     return None
 
 
-async def openai_chat_with_retry(**kwargs):
+async def openai_chat_with_retry(card_id: int | str, **kwargs):
     """Call OpenAI chat endpoint and retry when rate limited."""
     backoff = 1.0
     while True:
@@ -64,7 +73,7 @@ async def openai_chat_with_retry(**kwargs):
         except RateLimitError as e:
             wait = parse_retry_after(str(e)) or backoff
             backoff = min(backoff * 2, 60)
-            print(f"    Rate limit exceeded. Sleeping {wait} seconds...")
+            await log(card_id, f"    Rate limit exceeded. Sleeping {wait} seconds...")
             await asyncio.sleep(wait)
 
 
@@ -140,11 +149,14 @@ async def process_card(card):
     person = card["person"]
     conjugation = card["conjugation"]
 
-    print(f"\nProcessing row {card['conjugation_id']}/{total_rows}...")
-    print(f"  verb: {verb}")
-    print(f"  form: {form}")
-    print(f"  person: {person}")
-    print(f"  conjugation: {conjugation}")
+    await log(
+        card["conjugation_id"],
+        f"\nProcessing row {card['conjugation_id']}/{total_rows}...",
+    )
+    await log(card["conjugation_id"], f"  verb: {verb}")
+    await log(card["conjugation_id"], f"  form: {form}")
+    await log(card["conjugation_id"], f"  person: {person}")
+    await log(card["conjugation_id"], f"  conjugation: {conjugation}")
 
     verb_collocations = []
     if verb in verbs_dict and verbs_dict[verb]:
@@ -155,7 +167,10 @@ async def process_card(card):
         form_trigger_phrases = convert_to_array(forms_dict[form])
 
     if not verb_collocations or not form_trigger_phrases:
-        print("  Skipping - missing collocations or trigger phrases")
+        await log(
+            card["conjugation_id"],
+            "  Skipping - missing collocations or trigger phrases",
+        )
         return
 
     imperativo_specification = (
@@ -180,7 +195,7 @@ async def process_card(card):
 
     while attempts < max_total_attempts and not success:
         attempts += 1
-        print(f"  Attempt {attempts} with {MODEL}...")
+        await log(card["conjugation_id"], f"  Attempt {attempts} with {MODEL}...")
 
         selected_collocations = random.sample(
             verb_collocations, min(3, len(verb_collocations))
@@ -209,6 +224,7 @@ Example output
 
         try:
             response = await openai_chat_with_retry(
+                card["conjugation_id"],
                 model=MODEL,
                 messages=[
                     {
@@ -225,7 +241,9 @@ Example output
             generation_response = json.loads(response.choices[0].message.content)
             example_sentence = generation_response["example_sentence"]
 
-            print(f"    Generated sentence: {example_sentence}...")
+            await log(
+                card["conjugation_id"], f"    Generated sentence: {example_sentence}..."
+            )
 
             conjugation_regex = re.compile(
                 rf"\b{re.escape(conjugation)}\b", re.IGNORECASE
@@ -233,7 +251,9 @@ Example output
             conjugation_in_sentence = bool(conjugation_regex.search(example_sentence))
             if not conjugation_in_sentence:
                 failure_counts["conjugation_in_sentence"] += 1
-                print("    ✗ Failed: conjugation_in_sentence")
+                await log(
+                    card["conjugation_id"], "    ✗ Failed: conjugation_in_sentence"
+                )
 
             verification_prompt = f"""
 You are given
@@ -261,6 +281,7 @@ Checks
             await asyncio.sleep(2)
 
             verification_response = await openai_chat_with_retry(
+                card["conjugation_id"],
                 model=MODEL,
                 messages=[
                     {
@@ -282,20 +303,20 @@ Checks
 
             if all_passed:
                 card["example_sentence"] = example_sentence
-                print("    ✓ All checks passed!")
+                await log(card["conjugation_id"], "    ✓ All checks passed!")
                 success = True
             else:
                 for check, passed in verification_result.items():
                     if not passed:
                         failure_counts[check] += 1
-                        print(f"    ✗ Failed: {check}")
+                        await log(card["conjugation_id"], f"    ✗ Failed: {check}")
 
             card["attempts_count"] = str(attempts)
             card["failure_counts"] = json.dumps(failure_counts)
             await save_row_to_db(card)
 
         except Exception as e:
-            print(f"    ✗ Error: {str(e)}")
+            await log(card["conjugation_id"], f"    ✗ Error: {str(e)}")
             card["attempts_count"] = str(attempts)
             card["failure_counts"] = json.dumps(failure_counts)
             await save_row_to_db(card)
@@ -304,7 +325,10 @@ Checks
     if not success:
         card["attempts_count"] = str(attempts)
         card["failure_counts"] = json.dumps(failure_counts)
-        print(f"  Failed after {attempts} attempts. Failures: {failure_counts}")
+        await log(
+            card["conjugation_id"],
+            f"  Failed after {attempts} attempts. Failures: {failure_counts}",
+        )
     await save_row_to_db(card)
 
     if not FULL_AUTO_MODE:
@@ -321,7 +345,7 @@ async def main():
     ]
     await asyncio.gather(*tasks)
 
-    print(f"\nSaving rows to cards.db...")
+    await log("main", "\nSaving rows to cards.db...")
     with sqlite3.connect("cards.db") as save_conn:
         for row in cards_rows:
             save_conn.execute(
@@ -342,15 +366,15 @@ async def main():
         if row.get("attempts_count") and not row.get("example_sentence")
     )
 
-    print("\n" + "=" * 50)
-    print("SUMMARY:")
-    print(f"Total rows in file: {total_rows}")
-    print(f"Rows processed this run: {rows_to_process}")
-    print(f"Total successful verifications: {successful_rows}")
-    print(f"Still failed after max attempts: {failed_rows}")
+    await log("main", "\n" + "=" * 50)
+    await log("main", "SUMMARY:")
+    await log("main", f"Total rows in file: {total_rows}")
+    await log("main", f"Rows processed this run: {rows_to_process}")
+    await log("main", f"Total successful verifications: {successful_rows}")
+    await log("main", f"Still failed after max attempts: {failed_rows}")
 
     if failed_rows > 0:
-        print("\nFailure analysis (all attempts including previous runs):")
+        await log("main", "\nFailure analysis (all attempts including previous runs):")
         total_failures = {
             "conjugation_in_sentence": 0,
             "grammar_ok": 0,
@@ -363,11 +387,11 @@ async def main():
                 for check, count in failures.items():
                     total_failures[check] += count
 
-        print("Total failures by check type:")
+        await log("main", "Total failures by check type:")
         for check, count in total_failures.items():
-            print(f"  {check}: {count}")
+            await log("main", f"  {check}: {count}")
 
-    print("\nDone!")
+    await log("main", "\nDone!")
 
 
 if __name__ == "__main__":
