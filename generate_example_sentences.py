@@ -100,6 +100,27 @@ client = AsyncOpenAI()
 CONCURRENCY = cli_args.workers
 sem = asyncio.Semaphore(CONCURRENCY)
 
+
+def _write_row(row: dict) -> None:
+    """Persist a single row's progress to the SQLite database."""
+    with sqlite3.connect("cards.db") as save_conn:
+        save_conn.execute(
+            "UPDATE cards SET example_sentence=?, attempts_count=?, failure_counts=? WHERE conjugation_id=?",
+            (
+                row.get("example_sentence"),
+                row.get("attempts_count"),
+                row.get("failure_counts"),
+                row["conjugation_id"],
+            ),
+        )
+        save_conn.commit()
+
+
+async def save_row_to_db(row: dict) -> None:
+    """Asynchronously save a row to the SQLite database."""
+    await asyncio.to_thread(_write_row, row)
+
+
 # Count rows that need processing
 rows_to_process = sum(
     1 for card in cards_rows[start_index:end_index] if not card.get("example_sentence")
@@ -261,8 +282,6 @@ Checks
 
             if all_passed:
                 card["example_sentence"] = example_sentence
-                card["attempts_count"] = str(attempts)
-                card["failure_counts"] = json.dumps(failure_counts)
                 print("    ✓ All checks passed!")
                 success = True
             else:
@@ -271,14 +290,22 @@ Checks
                         failure_counts[check] += 1
                         print(f"    ✗ Failed: {check}")
 
+            card["attempts_count"] = str(attempts)
+            card["failure_counts"] = json.dumps(failure_counts)
+            await save_row_to_db(card)
+
         except Exception as e:
             print(f"    ✗ Error: {str(e)}")
+            card["attempts_count"] = str(attempts)
+            card["failure_counts"] = json.dumps(failure_counts)
+            await save_row_to_db(card)
             continue
 
     if not success:
         card["attempts_count"] = str(attempts)
         card["failure_counts"] = json.dumps(failure_counts)
         print(f"  Failed after {attempts} attempts. Failures: {failure_counts}")
+    await save_row_to_db(card)
 
     if not FULL_AUTO_MODE:
         await asyncio.to_thread(
