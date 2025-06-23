@@ -59,6 +59,7 @@ NO_IMPERATIVE_VERBS = {
     "caber",
     "yacer",
     "existir",
+    "necesitar"
 }
 
 # verbs that only use third-person forms
