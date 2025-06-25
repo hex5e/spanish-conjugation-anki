@@ -33,6 +33,8 @@ FIELDNAMES = [
     "example_sentence",
     "attempts_count",
     "failure_counts",
+    "speaker_gender",
+    "audio_path",
 ]
 
 
@@ -59,7 +61,7 @@ NO_IMPERATIVE_VERBS = {
     "caber",
     "yacer",
     "existir",
-    "necesitar"
+    "necesitar",
 }
 
 # verbs that only use third-person forms
@@ -189,12 +191,14 @@ def generate_conjugation_table():
             regularity_class TEXT,
             example_sentence TEXT,
             attempts_count INTEGER,
-            failure_counts TEXT
+            failure_counts TEXT,
+            speaker_gender TEXT,
+            audio_path TEXT
         )
         """
     )
     cur.executemany(
-        "INSERT INTO cards VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO cards VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [
             (
                 row["verb_id"],
@@ -210,6 +214,8 @@ def generate_conjugation_table():
                 row["example_sentence"],
                 row["attempts_count"],
                 row["failure_counts"],
+                row["speaker_gender"],
+                row["audio_path"],
             )
             for row in conjugation_table
         ],
