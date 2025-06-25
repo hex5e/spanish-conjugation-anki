@@ -93,9 +93,9 @@ Decision rules
 • If both or neither are possible → "neutral".
 
 Reply with exactly one of these JSON objects and nothing else:
-    {"speaker_gender":"neutral"}
-    {"speaker_gender":"male"}
-    {"speaker_gender":"female"}
+    {{"speaker_gender":"neutral"}}
+    {{"speaker_gender":"male"}}
+    {{"speaker_gender":"female"}}
 """
 
 
