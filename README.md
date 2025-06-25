@@ -51,6 +51,7 @@ produce audio using ElevenLabs.
 | `conjugation`                      | actual conjugation                                       | `soy`                               |
 | `regularity_class`                 | how the conjugation differs from the regular form (`totally_regular`, `orthographically_irregular`, or `morphologically_irregular`) | `totally_regular` |
 | `sentence`                         | example sentence using the conjugation                   | `Soy capaz de correr un maratón.`   |
+| `speaker_gender`                   | gender of the voice used for audio                       | `male`                              |
 | `audio_path`                       | path to the audio recording of the sentence              | `audio/1_3_11.mp3`                  |
 
 Join the discussion on
