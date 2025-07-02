@@ -1,6 +1,5 @@
 ipykernel
 python-dotenv
-elevenlabs
 openai
 pandas
 cloudscraper

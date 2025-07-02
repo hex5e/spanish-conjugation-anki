@@ -1,26 +1,34 @@
-from dotenv import load_dotenv
-from elevenlabs.client import ElevenLabs
-from elevenlabs import save
-import os
+from pathlib import Path
+from openai import OpenAI
 
-load_dotenv()
+voices = {
+    "male": ["ash", "onyx"],
+    "female": ["coral", "shimmer"]
+}
 
-client = ElevenLabs(api_key=os.getenv("TTS_API_KEY"))
+voice = voices["male"][1]  
 
-mario_voice_id = "tomkxGQGz4b1kE0EM722"
-lina_voice_id = "VmejBeYhbrcTPwDniox7"
-july_voice_id = "MD6rLAhozcrmkdMZeOBt"
+filename = f"{voice}"
 
-text = "Ella es responsable de coordinar el proyecto."
+client = OpenAI()
+speech_dir = Path(__file__).parent / "voices"
+speech_dir.mkdir(parents=True, exist_ok=True)
+speech_file_path = speech_dir / f"{filename}.mp3"
 
-print("Generating audio...")
-audio = client.text_to_speech.convert(
-    text=text,
-    voice_id=mario_voice_id,
-    model_id="eleven_multilingual_v2",
-    output_format="mp3_44100_128",
-)
+instructions=(
+        "Acento: español de Colombia neutro. "
+        "Tono: neutro. "
+        "Velocidad: un 10 % más lenta de lo normal. "
+        "Pronunciación: clara, marcando las consonantes."
+        )
 
-file_name = "output3.mp3"
-save(audio, file_name)
-print(f"Saved to {file_name}")
+
+with client.audio.speech.with_streaming_response.create(
+    model="gpt-4o-mini-tts",
+    voice=voice,
+    input="soy",
+    instructions=instructions
+) as response:
+    response.stream_to_file(speech_file_path)
+
+print(instructions)
