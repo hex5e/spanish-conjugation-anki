@@ -15,8 +15,8 @@ INSTRUCTIONS = (
 )
 
 VOICE_OPTIONS = {
-    "male": ["alloy", "ash", "echo", "fable", "onyx", "verse"],
-    "female": ["ballad", "coral", "nova", "sage", "shimmer"],
+    "male": ["ash", "onyx"],
+    "female": ["coral", "shimmer"],
 }
 
 
