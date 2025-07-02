@@ -3,13 +3,13 @@
 Utilities for building Spanish verb conjugation flashcards for Anki.  The
 repository is centred around a set of CSV files and Python scripts that
 create the deck, generate example sentences with OpenAI and optionally
-produce audio using ElevenLabs.
+produce audio using OpenAI text-to-speech.
 
 ## Setup
 
 1. Install Python 3.8+ and run `pip install -r requirements.txt`.
-2. Create a `.env` file containing the required API keys (`OPENAI_API_KEY`,
-   `TTS_API_KEY`, etc.).  Secrets are loaded with
+2. Create a `.env` file containing the required API key (`OPENAI_API_KEY`).
+   Secrets are loaded with
    [python-dotenv](https://pypi.org/project/python-dotenv/).
 3. All CSV files use UTF‑8 encoding because they contain accented Spanish
    characters.
@@ -32,7 +32,7 @@ produce audio using ElevenLabs.
   limits concurrent API calls with `--workers` (default `5`). Optional
   `--start` and `--end` arguments restrict processing to a row range.
 - `generate_audio.py` creates audio files for the sentences with
-  ElevenLabs.
+  OpenAI text-to-speech.
 - `utilities/get_conjugation_rae.py` scrapes conjugations from the RAE
   dictionary website and outputs them in the project's JSON format.
   Reflexive verbs are handled automatically by removing the trailing

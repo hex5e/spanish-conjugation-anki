@@ -15,27 +15,35 @@ import asyncio
 import json
 import re
 import sqlite3
-from openai import AsyncOpenAI, RateLimitError   # ≥ 1.14.0
+from openai import AsyncOpenAI, RateLimitError  # ≥ 1.14.0
 
 # --------------------------------------------------------------------------- #
 # Model / token budget
-MODEL = "o3"             # reasoning model
-MAX_COMPLETION_TOKENS = 1024   # counts visible + reasoning tokens :contentReference[oaicite:0]{index=0}
+MODEL = "o3"  # reasoning model
+MAX_COMPLETION_TOKENS = (
+    1024  # counts visible + reasoning tokens :contentReference[oaicite:0]{index=0}
+)
 
 # --------------------------------------------------------------------------- #
 # CLI
 parser = argparse.ArgumentParser(
     description="Determine speaker gender from example sentences (o3)"
 )
-parser.add_argument("--start", type=int, default=1,
-                    help="1-indexed start row (inclusive)")
-parser.add_argument("--end", type=int,
-                    help="1-indexed end row (inclusive; defaults to all rows)")
-parser.add_argument("--workers", type=int, default=5,
-                    help="Number of concurrent OpenAI requests")
-parser.add_argument("--effort", choices=["low", "medium", "high"],
-                    default="medium",
-                    help="Reasoning effort for o3 (low|medium|high)")
+parser.add_argument(
+    "--start", type=int, default=1, help="1-indexed start row (inclusive)"
+)
+parser.add_argument(
+    "--end", type=int, help="1-indexed end row (inclusive; defaults to all rows)"
+)
+parser.add_argument(
+    "--workers", type=int, default=5, help="Number of concurrent OpenAI requests"
+)
+parser.add_argument(
+    "--effort",
+    choices=["low", "medium", "high"],
+    default="medium",
+    help="Reasoning effort for o3 (low|medium|high)",
+)
 cli_args = parser.parse_args()
 
 # --------------------------------------------------------------------------- #
@@ -68,6 +76,7 @@ async def openai_chat_with_retry(card_id: int | str, **kwargs):
             await log(card_id, f"    Rate limit exceeded. Sleeping {wait}s...")
             await asyncio.sleep(wait)
 
+
 # --------------------------------------------------------------------------- #
 print("Loading cards from database...")
 conn = sqlite3.connect("cards.db")
@@ -81,6 +90,7 @@ end_index = min(cli_args.end or len(cards_rows), len(cards_rows))
 client = AsyncOpenAI()
 sem = asyncio.Semaphore(cli_args.workers)
 
+
 # --------------------------------------------------------------------------- #
 def _write_row(row: dict) -> None:
     with sqlite3.connect("cards.db") as save_conn:
@@ -93,6 +103,7 @@ def _write_row(row: dict) -> None:
 
 async def save_row_to_db(row: dict) -> None:
     await asyncio.to_thread(_write_row, row)
+
 
 # --------------------------------------------------------------------------- #
 PROMPT_TEMPLATE = """
@@ -116,8 +127,7 @@ async def process_card(card: dict) -> None:
     if not card.get("example_sentence") or card.get("speaker_gender"):
         return
 
-    await log(card["conjugation_id"],
-              f'Processing: "{card["example_sentence"]}"')
+    await log(card["conjugation_id"], f'Processing: "{card["example_sentence"]}"')
 
     prompt = PROMPT_TEMPLATE.format(sentence=card["example_sentence"])
 
@@ -134,15 +144,14 @@ async def process_card(card: dict) -> None:
             # NEW ⚙️  tell o3 how hard to think :contentReference[oaicite:1]{index=1}
             reasoning_effort=cli_args.effort,
         )
-        gender = json.loads(response.choices[0].message.content).get(
-            "speaker_gender"
-        )
+        gender = json.loads(response.choices[0].message.content).get("speaker_gender")
         card["speaker_gender"] = gender
         await log(card["conjugation_id"], f"Detected gender: {gender}")
         await save_row_to_db(card)
 
     except Exception as exc:
         await log(card["conjugation_id"], f"    Error: {exc}")
+
 
 # --------------------------------------------------------------------------- #
 async def main() -> None:
