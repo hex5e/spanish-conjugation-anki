@@ -31,7 +31,7 @@ rows = [dict(row) for row in conn.execute("SELECT * FROM cards").fetchall()]
 media_files = []
 
 for row in rows:
-    if any(isinstance(v, str) and v.strip() == "" for v in row.values()):
+    if any(v is None or (isinstance(v, str) and not v.strip()) for v in row.values()):
         continue
 
     sentence = row["example_sentence"]
