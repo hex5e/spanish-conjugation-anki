@@ -6,3 +6,4 @@ cloudscraper
 beautifulsoup4
 pytest
 pyphen
+genanki
