@@ -5,6 +5,9 @@ import re
 import sqlite3
 from pathlib import Path
 from openai import AsyncOpenAI, RateLimitError
+from dotenv import load_dotenv
+
+load_dotenv()
 
 MODEL = "gpt-4o-mini-tts"
 INSTRUCTIONS = (
