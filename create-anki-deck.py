@@ -296,10 +296,27 @@ for row in rows:
         
         extra_field = ''.join(extra_parts)
         
-        # Create the note
+        # Create the note with tags
         note = genanki.Note(
             model=cloze_model,
             fields=[text_field, extra_field])
+        
+        # Add tags
+        tags = []
+        
+        # Add verb tag
+        tags.append(f"verb::{row['verb']}")
+        
+        # Add form tag
+        tags.append(f"form::{row['form']}")
+        
+        # Add person tag (only if not 'not_applicable')
+        if row['person'] != 'not_applicable':
+            tags.append(f"person::{row['person']}")
+        
+        # Set the tags on the note
+        note.tags = tags
+        
         cloze_deck.add_note(note)
         cards_created += 1
     else:
